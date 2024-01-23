@@ -1,0 +1,13 @@
+{
+  "name": "three-portfolio-site",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "vite"
+  },
+  "dependencies": {
+    "three": "^0.157.0",
+    "vite": "^4.5.0"
+  }
+}
