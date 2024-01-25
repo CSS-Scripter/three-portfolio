@@ -1,7 +1,6 @@
 import * as THREE from 'three';
-import { nodeData } from '../json/node';
 import { BLACK, HIGHLIGHT, SCROLL_SPEED, WHITE } from './constants';
-import { connectNodes, createNode, materializeConnection } from './generation';
+import { connectNodes, createNodeStructure, materializeConnection } from './generation';
 import { createControls, getRenderEssentials } from './scene';
 
 const overlayDocument = document.getElementById('overlay');
@@ -54,22 +53,7 @@ document.addEventListener('wheel', (event) => {
     controls.enabled = true;
 })
 
-let currentY = 28;
-const nodes = {};
-nodeData
-    .sort((n1, n2) => n1.timeline - n2.timeline)
-    .map((n) => {
-        const min = -5;
-        const max = 5;
-        const randX = Math.random() * (max - min) + min;
-        const randZ = Math.random() * (max - min) + min;
-        const node = createNode(new THREE.Vector3(randX, currentY, randZ));
-        currentY -= 5;
-        return { node, data: n };
-    }) 
-    .forEach((e) => {
-        nodes[e.data.id] = e;
-    });
+const nodes = createNodeStructure();
 
 const connections = [];
 Object.values(nodes).forEach((d) => {
@@ -113,8 +97,19 @@ function openOverlay(node) {
 
     overlayDocument.style.display = 'block';
     const bounds = overlayDocument.getBoundingClientRect();
-    overlayDocument.style.top = `${absMouse.y - (bounds.height/2)}px`;
-    overlayDocument.style.left = `${absMouse.x - (bounds.width/2)}px`;
+
+    const minTop = 20;
+    const minLeft = 20;
+    const targetBounds = targetDocument.getBoundingClientRect();
+    const maxTop = targetBounds.height - bounds.height;
+    const maxLeft = targetBounds.width - bounds.width;
+
+    const wantedTop = absMouse.y - (bounds.height/2);
+    const wantedLeft = absMouse.x - (bounds.width/2);
+    
+
+    overlayDocument.style.top = `${Math.max(minTop, Math.min(wantedTop, maxTop))}px`;
+    overlayDocument.style.left = `${Math.max(minLeft, Math.min(wantedLeft, maxLeft))}px`;
 }
 
 function animate() {
@@ -125,6 +120,7 @@ function animate() {
 
     raycaster.setFromCamera(mouse, camera);
     intersects = raycaster.intersectObjects(Object.values(nodes).map(({node})=>node));
+    Object.values(nodes).forEach((n) => n.node.material.color.set(WHITE))
     if (intersects.length !== 0) {
         intersects[0].object.material.color.set(HIGHLIGHT);
         controls.autoRotate = false;
@@ -141,7 +137,6 @@ function animate() {
         }
     } else {
         if (!isMouseInOverlay()) {
-            Object.values(nodes).forEach((n) => n.node.material.color.set(WHITE))
             controls.autoRotate = true;
             overlayDocument.style.display = 'none';
             hintDocument.style.display = 'none';

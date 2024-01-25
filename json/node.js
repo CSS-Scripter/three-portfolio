@@ -51,7 +51,7 @@ export const nodeData = [
         description: `
             I started off at Whispp mainly as a software tester. I had to test the iOS app, which was being developed in house. Later my responsibilities expanded to creating a data collection platform, to collect data for AI training (similar to common voice by mozilla). Additionally, I've done the research proving Whispp's marketing claims to be truthful, making Whispp eligible for the CE certificate,and being able to sell their product in the EU.
         `,
-        connectionsFrom: [],
+        connectionsFrom: ['startupville'],
         skills: ['Software Testing', 'NestJS', 'Vue3', 'Research']
     }, {
         id: 'whispp_intern',
@@ -126,4 +126,12 @@ export const nodeData = [
         connectionsFrom: ['syntax_board'],
         skills: ['Angular', 'Javascript', 'Typescript']
     }
-]
+];
+
+export const GetNodeRelations = () => {
+    const mappings = {};
+    nodeData.forEach((node) => {
+        mappings[node.id] = nodeData.filter((n) => n.connectionsFrom.includes(node.id)).map((n) => n.id);
+    });
+    return mappings;
+}
