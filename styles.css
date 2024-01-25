@@ -48,7 +48,7 @@ section.heading * {
     background: rgba(50, 50, 50, 0.6);
     padding: 2em;
     font-size: 0.7rem;
-    max-width: 50vw;
+    max-width: max(50vw, 300px);
 }
 
 #hint:hover {

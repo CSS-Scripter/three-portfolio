@@ -98,8 +98,8 @@ function openOverlay(node) {
     overlayDocument.style.display = 'block';
     const bounds = overlayDocument.getBoundingClientRect();
 
-    const minTop = 20;
-    const minLeft = 20;
+    const minTop = 10;
+    const minLeft = 10;
     const targetBounds = targetDocument.getBoundingClientRect();
     const maxTop = targetBounds.height - bounds.height;
     const maxLeft = targetBounds.width - bounds.width;
