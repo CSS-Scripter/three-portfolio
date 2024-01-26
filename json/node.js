@@ -71,11 +71,11 @@ export const nodeData = [
         connectionsFrom: ['hsleiden', 'whispp_student'],
         skills: ['UML', 'Cloud architecture', 'Github actions', 'CI/CD', 'Express', 'Typescript']
     }, {
-        id: 'whispp',
+        id: 'whispp_fullstack',
         timeline: 2023_02,
         title: 'Fulltime Software engineer',
         subtitle: 'Whispp B.V.',
-        timestamp: '08/2023 to current',
+        timestamp: '08/2023 to 01/2024',
         description: `
             Developer of the backend of the calling functionality in the Whispp app.
         `,
@@ -125,6 +125,17 @@ export const nodeData = [
         `,
         connectionsFrom: ['syntax_board'],
         skills: ['Angular', 'Javascript', 'Typescript']
+    }, {
+        id: 'whispp_lead-architect',
+        timeline: 2024_01,
+        title: 'Lead Architect',
+        subtitle: 'Whispp B.V.',
+        timestamp: '01/2024 to current',
+        description: `
+            Main developer of infrastructure and software architecture at Whispp
+        `,
+        connectionsFrom: ['whispp_fullstack'],
+        skills: []
     }
 ];
 
