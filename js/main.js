@@ -11,7 +11,7 @@ const { scene, camera, renderer } = getRenderEssentials(targetDocument);
 targetDocument.prepend(renderer.domElement);
 
 const controls = createControls(camera, renderer);
-camera.position.z = 30;
+camera.position.z = 20;
 controls.update();
 
 const raycaster = new THREE.Raycaster();
@@ -42,7 +42,7 @@ document.addEventListener('mousedown', (event) => {
     }
 })
 
-document.addEventListener('wheel', (event) => {
+function onScroll(event) {
     const goingUp = event.deltaY < 0;
     controls.enabled = false;
     if (goingUp) {
@@ -51,7 +51,10 @@ document.addEventListener('wheel', (event) => {
         controls.target.y -= SCROLL_SPEED;
     }
     controls.enabled = true;
-})
+}
+
+document.addEventListener('wheel', onScroll);
+document.addEventListener("drag", onScroll);
 
 const nodes = createNodeStructure();
 
@@ -135,12 +138,10 @@ function animate() {
         } else {
             hintDocument.style.display = 'none';
         }
-    } else {
-        if (!isMouseInOverlay()) {
-            controls.autoRotate = true;
-            overlayDocument.style.display = 'none';
-            hintDocument.style.display = 'none';
-        }
+    } else if (!isMouseInOverlay()) {
+        controls.autoRotate = true;
+        overlayDocument.style.display = 'none';
+        hintDocument.style.display = 'none';
     }
 
     renderer.render(scene, camera);
