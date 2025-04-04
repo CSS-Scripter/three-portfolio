@@ -24,7 +24,8 @@ export function createControls(camera, renderer) {
     controls.maxPolarAngle = Math.PI/2;
     controls.autoRotate = true;
     controls.enableZoom = false;
-    controls.enablePan = false;
+    controls.enablePan = true;
+    controls.screenSpacePanning = true;
     controls.enableDamping = true;
     controls.dampingFactor = 0.2;
 

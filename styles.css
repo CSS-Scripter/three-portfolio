@@ -54,3 +54,25 @@ section.heading * {
 #hint:hover {
     cursor: none;
 }
+
+
+section.controls {
+    margin: 3em 0;
+}
+
+.horizontal {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1em;
+}
+
+section.controls button {
+    outline: none;
+    border: none;
+    background: transparent;
+    color: white;
+    margin-top: 1em;
+    border-bottom: 1px solid white;
+    cursor: pointer;
+}
