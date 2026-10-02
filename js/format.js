@@ -80,7 +80,7 @@ export function renderMilestoneList(nodes) {
                 </button>
                 <div class="milestone-body">
                     ${paragraphs(n.description).map((p) => `<p>${escapeHtml(p)}</p>`).join('')}
-                    ${renderAwards(n)}
+                    ${renderAwards(n, 'h4')}
                     ${n.skills.length ? `<ul class="chips">${n.skills.map((s) => `<li>${escapeHtml(s)}</li>`).join('')}</ul>` : ''}
                     ${n.links?.length ? `<p class="milestone-links">${renderLinks(n.links)}</p>` : ''}
                 </div>
@@ -96,9 +96,19 @@ export function awardMeta(award) {
     return [award.by, formatMonth(award.date)].filter(Boolean).join(' · ');
 }
 
-export function renderAwards(node) {
+/** Personal achievements and team awards, each under their own heading. */
+export function renderAwards(node, headingTag = 'h3') {
     const awards = sortedAwards(node);
-    if (!awards.length) return '';
+    return [
+        ['Achievements', awards.filter((a) => !a.team)],
+        ['Team awards', awards.filter((a) => a.team)],
+    ]
+        .filter(([, group]) => group.length)
+        .map(([label, group]) => `<${headingTag} class="awards-label">${label}</${headingTag}>${renderAwardList(group)}`)
+        .join('');
+}
+
+function renderAwardList(awards) {
     return `<ul class="awards">${awards.map((a) => {
         const title = `<span class="award-title">${escapeHtml(a.title)}</span>`;
         const meta = `<span class="award-meta">${escapeHtml(awardMeta(a))}</span>`;

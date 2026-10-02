@@ -347,8 +347,10 @@ button:focus-visible, a:focus-visible, #overlay:focus-visible {
 .awards a:hover .award-title { color: var(--accent); }
 .award-title { display: block; font-size: 0.82rem; color: var(--fg); line-height: 1.4; }
 .award-meta { display: block; font-family: var(--mono); font-size: 0.68rem; color: var(--muted); }
+#awards { margin-bottom: 1.1em; }
 #awards:empty { display: none; }
-.milestone-body .awards { margin: 0.75rem 0; }
+.milestone-body .awards { margin: 0.25rem 0 0.75rem; }
+.milestone-body .awards-label { margin: 1rem 0 0.4rem; font-size: 0.7rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 
 .chips.external > li { padding: 0; border: none; }
 

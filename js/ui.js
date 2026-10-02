@@ -98,7 +98,8 @@ export function createUI({ onSelect, onClose }) {
         if (!hintVisible || el.hint.dataset.id !== node.id) {
             el.hint.dataset.id = node.id;
             el.hintTitle.textContent = node.title;
-            const awards = node.awards?.length ? ` · ${node.awards.length} award${node.awards.length > 1 ? 's' : ''}` : '';
+            const teamAwards = node.awards?.filter((a) => a.team).length ?? 0;
+            const awards = teamAwards ? ` · ${teamAwards} award${teamAwards > 1 ? 's' : ''}` : '';
             el.hintMeta.textContent = `${node.subtitle} · ${formatPeriod(node)}${awards}`;
             el.hint.classList.add('visible');
             hintVisible = true;
@@ -132,7 +133,7 @@ export function createUI({ onSelect, onClose }) {
         }));
 
         // Built from escaped data only (see renderAwards)
-        el.awards.innerHTML = node.awards?.length ? `<h3>Team awards</h3>${renderAwards(node)}` : '';
+        el.awards.innerHTML = renderAwards(node);
 
         el.skills.replaceChildren(...node.skills.map((s) => chip(s)));
         el.skills.hidden = node.skills.length === 0;

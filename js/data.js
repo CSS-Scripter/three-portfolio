@@ -28,7 +28,7 @@ export const profile = {
  * @property {string[]} connectionsFrom
  * @property {string[]} skills
  * @property {{ label: string, href: string }[]} [links]  Shown on the card, e.g. a live site or repository
- * @property {Award[]} [awards]  Team awards won during this milestone; each one orbits the node as a small dot
+ * @property {Award[]} [awards]  Achievements and team awards; each one orbits the node as a small dot
  */
 
 /**
@@ -37,6 +37,7 @@ export const profile = {
  * @property {string} [by]     Who gave the award, when that isn't already in the title
  * @property {string} date     'YYYY-MM' of the announcement
  * @property {string} [href]   Announcement or listing
+ * @property {boolean} [team]  Won as a team; listed under "Team awards" instead of "Achievements"
  */
 
 /** @type {Milestone[]} */
@@ -55,7 +56,10 @@ export const nodeData = [
             The third and fourth year are divided into four semesters, which can be done in almost any order you'd like: a project of your choice, accompanied by lectures and tests; an internship; a minor; and a graduation internship. For me, the project was SyncMyMusic, the internship was done at OneTwoModel, the minor was Startup Ville, where I created Heya Social, and the graduation internship was at Whispp.
         `,
         connectionsFrom: [],
-        skills: ['Java', 'Python', 'JavaScript', 'TypeScript', 'Golang', 'Spring Boot', 'Angular', 'Vue', 'Database Design', 'Docker', 'Software Testing', 'CI/CD', 'much more...']
+        skills: ['Java', 'Python', 'JavaScript', 'TypeScript', 'Golang', 'Spring Boot', 'Angular', 'Vue', 'Database Design', 'Docker', 'Software Testing', 'CI/CD', 'much more...'],
+        awards: [
+            { title: 'Graduated', by: "Bachelor's degree in Computer Science", date: '2023-06' },
+        ]
     }, {
         id: 'onetwomodel',
         title: 'Internship Full Stack Developer',
@@ -124,7 +128,7 @@ export const nodeData = [
         connectionsFrom: ['whispp_intern'],
         skills: ['Express', 'TypeScript', 'Python', 'GCP'],
         awards: [
-            { title: 'CES Innovation Award 2024', by: 'Honoree, Accessibility & Longevity', date: '2023-11', href: 'https://www.ces.tech/ces-innovation-awards/2024/whispp/' },
+            { team: true, title: 'CES Innovation Award 2024', by: 'Honoree, Accessibility & Longevity', date: '2023-11', href: 'https://www.ces.tech/ces-innovation-awards/2024/whispp/' },
         ],
     }, {
         id: 'teaching_assistant',
@@ -229,9 +233,9 @@ export const nodeData = [
         connectionsFrom: ['whispp_fullstack'],
         skills: [],
         awards: [
-            { title: 'Best of MWC 2024', by: 'Android Authority', date: '2024-02', href: 'https://www.androidauthority.com/best-of-mwc-2024-awards-3420794/' },
-            { title: 'TIME Best Inventions 2024', date: '2024-10', href: 'https://time.com/collections/best-inventions-2024/7094886/whispp/' },
-            { title: 'Forbes Accessibility 100', date: '2025-06', href: 'https://www.forbes.com/lists/accessibility-100/' },
+            { team: true, title: 'Best of MWC 2024', by: 'Android Authority', date: '2024-02', href: 'https://www.androidauthority.com/best-of-mwc-2024-awards-3420794/' },
+            { team: true, title: 'TIME Best Inventions 2024', date: '2024-10', href: 'https://time.com/collections/best-inventions-2024/7094886/whispp/' },
+            { team: true, title: 'Forbes Accessibility 100', date: '2025-06', href: 'https://www.forbes.com/lists/accessibility-100/' },
         ],
     }
 ];
