@@ -104,7 +104,7 @@ export const nodeData = [
         title: 'Graduation Internship Full Stack Developer',
         subtitle: 'Whispp B.V.',
         start: '2023-02',
-        end: '2023-08',
+        end: '2023-07',
         description: `
             Whispp tries to give people with a voice disorder their voice back with AI. One of their big milestones is to get this working during a phone call, so people with voice disorders can become intelligible on the phone again.
 
@@ -120,7 +120,7 @@ export const nodeData = [
         id: 'whispp_fullstack',
         title: 'Full-time Software Engineer',
         subtitle: 'Whispp B.V.',
-        start: '2023-08',
+        start: '2023-07',
         end: '2024-01',
         description: `
             After graduating, I continued as the backend developer of Whispp's calling functionality: a real-time audio streaming pipeline for phone calls, which processes the caller's voice through the Whispp AI in-flight to make them intelligible again. It's written in TypeScript and Python.
