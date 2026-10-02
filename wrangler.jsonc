@@ -4,6 +4,9 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "three-portfolio",
   "compatibility_date": "2026-10-02",
+  // Served on lnmn.nl (custom domain, managed in the dashboard). Without this, every
+  // deploy would switch the *.workers.dev address back on.
+  "workers_dev": false,
   "assets": {
     "directory": "./dist"
   }
