@@ -81,6 +81,7 @@ export function renderMilestoneList(nodes) {
                 <div class="milestone-body">
                     ${paragraphs(n.description).map((p) => `<p>${escapeHtml(p)}</p>`).join('')}
                     ${n.skills.length ? `<ul class="chips">${n.skills.map((s) => `<li>${escapeHtml(s)}</li>`).join('')}</ul>` : ''}
+                    ${n.links?.length ? `<p class="milestone-links">${renderLinks(n.links)}</p>` : ''}
                 </div>
             </article>
         </li>`).join('');

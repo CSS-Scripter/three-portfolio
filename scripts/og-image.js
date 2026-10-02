@@ -50,11 +50,40 @@ const fov = 30;
 const centerY = (layout.top + layout.bottom) / 2;
 const visibleHeight = layout.top - layout.bottom + 10;
 const distance = visibleHeight / (2 * Math.tan(THREE.MathUtils.degToRad(fov / 2)));
-const azimuth = Math.PI / 2 - layout.nodes.get(current.id).angle + 1.15;
 const camera = new THREE.PerspectiveCamera(fov, TREE.width / HEIGHT, 0.1, 1000);
-camera.position.set(Math.sin(azimuth) * distance, centerY, Math.cos(azimuth) * distance);
-camera.lookAt(0, centerY, 0);
-camera.updateMatrixWorld();
+const placeCamera = (azimuth) => {
+    camera.position.set(Math.sin(azimuth) * distance, centerY, Math.cos(azimuth) * distance);
+    camera.lookAt(0, centerY, 0);
+    camera.updateMatrixWorld();
+};
+
+// Look at the current role's column from the side (so it doesn't hide the spine), at
+// the angle where milestones overlap each other and the spine the least on screen
+const facing = Math.PI / 2 - layout.nodes.get(current.id).angle;
+const separation = (azimuth) => {
+    placeCamera(azimuth);
+    const toScreen = (p) => {
+        const v = new THREE.Vector3(p.x, p.y, p.z).project(camera);
+        return { x: v.x * TREE.width / 2, y: v.y * HEIGHT / 2 };
+    };
+    const points = [...layout.nodes.values()].filter((n) => !n.onSpine).map((n) => ({
+        ...toScreen(n.position),
+        spineX: toScreen({ x: 0, y: n.position.y, z: 0 }).x,
+    }));
+    let min = Infinity;
+    points.forEach((a, i) => {
+        min = Math.min(min, Math.abs(a.x - a.spineX));
+        points.slice(i + 1).forEach((b) => {
+            min = Math.min(min, Math.hypot(a.x - b.x, a.y - b.y));
+        });
+    });
+    return min;
+};
+let azimuth = facing + Math.PI / 2;
+for (let offset = 0.6; offset <= 2.5; offset += 0.02) {
+    if (separation(facing + offset) > separation(azimuth)) azimuth = facing + offset;
+}
+placeCamera(azimuth);
 
 const focal = HEIGHT / 2 / Math.tan(THREE.MathUtils.degToRad(fov / 2));
 const project = (p) => {

@@ -35,6 +35,27 @@ function chip(text, onClick) {
     return li;
 }
 
+function linkGroup(links = []) {
+    if (!links.length) return null;
+    const wrapper = document.createElement('div');
+    const heading = document.createElement('h3');
+    heading.textContent = 'Links';
+    const list = document.createElement('ul');
+    list.className = 'chips external';
+    links.forEach(({ label, href }) => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = href;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.textContent = `${label} ↗`;
+        li.append(a);
+        list.append(li);
+    });
+    wrapper.append(heading, list);
+    return wrapper;
+}
+
 function relationGroup(label, nodes, onSelect) {
     if (!nodes.length) return null;
     const wrapper = document.createElement('div');
@@ -112,6 +133,7 @@ export function createUI({ onSelect, onClose }) {
         el.skills.hidden = node.skills.length === 0;
 
         el.relations.replaceChildren(...[
+            linkGroup(node.links),
             relationGroup('Came from', parents, onSelect),
             relationGroup('Led to', children, onSelect),
         ].filter(Boolean));

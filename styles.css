@@ -69,7 +69,14 @@ button:focus-visible, a:focus-visible, #overlay:focus-visible {
     color: var(--muted);
 }
 
-.links:empty { display: none; }
+.tagline {
+    margin: 0.3em 0 0;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+}
+
+.tagline:empty, .links:empty { display: none; }
 
 .links {
     display: flex;
@@ -309,6 +316,24 @@ button:focus-visible, a:focus-visible, #overlay:focus-visible {
 }
 
 .chips.links button:hover { background: rgba(214, 104, 83, 0.25); }
+
+.chips.external > li { padding: 0; border: none; }
+
+.chips.external a {
+    display: inline-block;
+    padding: 0.25em 0.75em;
+    border: 1px solid var(--faint);
+    border-radius: 999px;
+    font-size: 0.72rem;
+    color: var(--fg);
+    text-decoration: none;
+    transition: border-color 0.2s;
+}
+
+.chips.external a:hover { border-color: var(--accent); }
+
+.milestone-links { display: flex; gap: 1em; font-size: 0.8rem; }
+.milestone-links a { color: var(--fg); }
 
 .stepper {
     display: flex;

@@ -4,6 +4,8 @@
 
 export const profile = {
     name: 'Thom Leenman',
+    // Shown right under the name
+    tagline: "aka CSS-Scripter (can't do css tho)",
     // Where the site is hosted; link previews need absolute URLs (e.g. for og.png)
     url: 'https://lnmn.nl',
     // Shown under the name. Leave empty to derive it from the current milestone.
@@ -25,6 +27,7 @@ export const profile = {
  * @property {string} description     Paragraphs separated by a blank line
  * @property {string[]} connectionsFrom
  * @property {string[]} skills
+ * @property {{ label: string, href: string }[]} [links]  Shown on the card, e.g. a live site or repository
  */
 
 /** @type {Milestone[]} */
@@ -155,6 +158,53 @@ export const nodeData = [
         `,
         connectionsFrom: ['hsleiden'],
         skills: ['Angular', 'JavaScript', 'TypeScript']
+    }, {
+        id: 'syncmymusic',
+        title: 'SyncMyMusic',
+        subtitle: 'School project',
+        // Estimated: the project semester before the GitHub repository was created (Jan 2021)
+        start: '2020-09',
+        end: '2021-01',
+        description: `
+            A school project, with the primary goal of setting up a CI/CD pipeline. The project itself was done in Golang and Vue, with a self-hosted GitLab CI pipeline.
+
+            The website was meant for music bands, with the goal of easily managing sheet music. It's always a pain to search through all the sheet music until you find the correct one.
+        `,
+        connectionsFrom: ['hsleiden'],
+        skills: ['Golang', 'Vue', 'GitLab CI', 'CI/CD'],
+        links: [
+            { label: 'GitHub', href: 'https://github.com/CSS-Scripter/SyncMyMusic' },
+        ],
+    }, {
+        id: 'cite',
+        title: 'Cite',
+        subtitle: 'School project',
+        start: '2021-02',
+        end: '2021-05',
+        description: `
+            There are a lot of occasions where another WhatsApp group is created with the sole purpose of storing quotes. Why not keep them in a nicely styled app that also has the sole purpose of storing quotes? Created in collaboration with my buddy Daniel (LNGZL)!
+        `,
+        connectionsFrom: ['hsleiden'],
+        skills: [],
+        links: [
+            { label: 'LNGZL', href: 'https://lngzl.nl/' },
+        ],
+    }, {
+        id: 'pixelfont',
+        title: 'PixelFont',
+        subtitle: 'Side project',
+        // Estimated: when the GitHub repository was created; still online, so no end date
+        start: '2020-10',
+        end: null,
+        description: `
+            It's basically a font in pure (S)CSS. It started off as one of my less serious projects, and it still is one of my less serious projects.
+        `,
+        connectionsFrom: ['hsleiden'],
+        skills: ['CSS', 'SCSS'],
+        links: [
+            { label: 'pixelfont.lnmn.nl', href: 'https://pixelfont.lnmn.nl' },
+            { label: 'GitHub', href: 'https://github.com/CSS-Scripter/PixelFont' },
+        ],
     }, {
         id: 'whispp_lead-architect',
         title: 'Lead Architect',

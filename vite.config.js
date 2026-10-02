@@ -12,6 +12,7 @@ function staticContent() {
     const replacements = {
         '<!--profile-name-->': escapeHtml(profile.name),
         '<!--profile-role-->': escapeHtml(role),
+        '<!--profile-tagline-->': escapeHtml(profile.tagline ?? ''),
         '<!--profile-links-->': renderLinks(profile.links),
         '<!--milestones-->': renderMilestoneList(nodeData),
         '%DESCRIPTION%': escapeHtml(summary),

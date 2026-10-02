@@ -3,6 +3,7 @@ import { Line2 } from 'three/addons/lines/Line2.js';
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
 import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { DIMMED, HIGHLIGHT, LINEAGE, NODE_RADIUS, WHITE } from './constants';
+import { currentMilestone } from './format';
 import { getGlowTexture } from './textures';
 
 const discGeometry = new THREE.CircleGeometry(NODE_RADIUS, 64);
@@ -43,7 +44,7 @@ export function createConnectionCurve(points) {
     return path;
 }
 
-function createNodeView(data, item) {
+function createNodeView(data, item, isCurrent) {
     const group = new THREE.Group();
     group.position.set(item.position.x, item.position.y, item.position.z);
 
@@ -70,7 +71,7 @@ function createNodeView(data, item) {
     billboard.add(halo, disc, ring, hit);
 
     let ping = null;
-    if (data.end === null) {
+    if (isCurrent) {
         ping = new THREE.Mesh(ringGeometry, new THREE.MeshBasicMaterial({
             color: HIGHLIGHT, transparent: true, opacity: 0, depthWrite: false,
         }));
@@ -140,7 +141,8 @@ function createPulses(edges) {
 export function createGraph(layout, nodes) {
     const group = new THREE.Group();
 
-    const nodeViews = new Map(nodes.map((n) => [n.id, createNodeView(n, layout.nodes.get(n.id))]));
+    const current = currentMilestone(nodes);
+    const nodeViews = new Map(nodes.map((n) => [n.id, createNodeView(n, layout.nodes.get(n.id), n === current)]));
     const edgeViews = layout.edges.map((e) => createEdgeView(e, nodeViews));
     const pulses = createPulses(edgeViews);
 
