@@ -28,6 +28,15 @@ export const profile = {
  * @property {string[]} connectionsFrom
  * @property {string[]} skills
  * @property {{ label: string, href: string }[]} [links]  Shown on the card, e.g. a live site or repository
+ * @property {Award[]} [awards]  Team awards won during this milestone; each one orbits the node as a small dot
+ */
+
+/**
+ * @typedef {Object} Award
+ * @property {string} title
+ * @property {string} [by]     Who gave the award, when that isn't already in the title
+ * @property {string} date     'YYYY-MM' of the announcement
+ * @property {string} [href]   Announcement or listing
  */
 
 /** @type {Milestone[]} */
@@ -114,6 +123,9 @@ export const nodeData = [
         `,
         connectionsFrom: ['whispp_intern'],
         skills: ['Express', 'TypeScript', 'Python', 'GCP'],
+        awards: [
+            { title: 'CES Innovation Award 2024', by: 'Honoree, Accessibility & Longevity', date: '2023-11', href: 'https://www.ces.tech/ces-innovation-awards/2024/whispp/' },
+        ],
     }, {
         id: 'teaching_assistant',
         title: 'Teaching Assistant',
@@ -215,7 +227,12 @@ export const nodeData = [
             Main developer of infrastructure and software architecture at Whispp.
         `,
         connectionsFrom: ['whispp_fullstack'],
-        skills: []
+        skills: [],
+        awards: [
+            { title: 'Best of MWC 2024', by: 'Android Authority', date: '2024-02', href: 'https://www.androidauthority.com/best-of-mwc-2024-awards-3420794/' },
+            { title: 'TIME Best Inventions 2024', date: '2024-10', href: 'https://time.com/collections/best-inventions-2024/7094886/whispp/' },
+            { title: 'Forbes Accessibility 100', date: '2025-06', href: 'https://www.forbes.com/lists/accessibility-100/' },
+        ],
     }
 ];
 

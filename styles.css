@@ -317,6 +317,39 @@ button:focus-visible, a:focus-visible, #overlay:focus-visible {
 
 .chips.links button:hover { background: rgba(214, 104, 83, 0.25); }
 
+.awards {
+    display: grid;
+    gap: 0.6em;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.awards li {
+    position: relative;
+    padding-left: 1.1em;
+}
+
+.awards li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.5em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+}
+
+.awards a { color: inherit; text-decoration: none; }
+.awards a .award-title::after { content: " ↗"; color: var(--muted); }
+.awards a:hover .award-title { color: var(--accent); }
+.award-title { display: block; font-size: 0.82rem; color: var(--fg); line-height: 1.4; }
+.award-meta { display: block; font-family: var(--mono); font-size: 0.68rem; color: var(--muted); }
+#awards:empty { display: none; }
+.milestone-body .awards { margin: 0.75rem 0; }
+
 .chips.external > li { padding: 0; border: none; }
 
 .chips.external a {

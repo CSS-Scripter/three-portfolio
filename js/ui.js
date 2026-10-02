@@ -1,4 +1,4 @@
-import { formatDuration, formatPeriod, paragraphs } from './format';
+import { formatDuration, formatPeriod, paragraphs, renderAwards } from './format';
 
 const $ = (id) => document.getElementById(id);
 
@@ -8,6 +8,7 @@ const el = {
     subtitle: $('subtitle'),
     timestamp: $('timestamp'),
     description: $('description'),
+    awards: $('awards'),
     skills: $('skills'),
     relations: $('relations'),
     prev: $('prev'),
@@ -97,7 +98,8 @@ export function createUI({ onSelect, onClose }) {
         if (!hintVisible || el.hint.dataset.id !== node.id) {
             el.hint.dataset.id = node.id;
             el.hintTitle.textContent = node.title;
-            el.hintMeta.textContent = `${node.subtitle} · ${formatPeriod(node)}`;
+            const awards = node.awards?.length ? ` · ${node.awards.length} award${node.awards.length > 1 ? 's' : ''}` : '';
+            el.hintMeta.textContent = `${node.subtitle} · ${formatPeriod(node)}${awards}`;
             el.hint.classList.add('visible');
             hintVisible = true;
         }
@@ -128,6 +130,9 @@ export function createUI({ onSelect, onClose }) {
             p.textContent = text;
             return p;
         }));
+
+        // Built from escaped data only (see renderAwards)
+        el.awards.innerHTML = node.awards?.length ? `<h3>Team awards</h3>${renderAwards(node)}` : '';
 
         el.skills.replaceChildren(...node.skills.map((s) => chip(s)));
         el.skills.hidden = node.skills.length === 0;

@@ -125,7 +125,14 @@ const nodes = [...layout.nodes.entries()]
         const ring = isCurrent
             ? `<circle cx="${round(n.x)}" cy="${round(n.y)}" r="${round(r * 1.75)}" stroke="${hex(HIGHLIGHT)}" stroke-width="1.6" stroke-opacity="0.7" fill="none"/>`
             : '';
-        return `${glow}<circle cx="${round(n.x)}" cy="${round(n.y)}" r="${round(r)}" fill="${fill}"/>${ring}`;
+        // Awards orbit their milestone, as on the site
+        const awards = byId.get(n.id).awards ?? [];
+        const satellites = awards.map((_, i) => {
+            const a = -Math.PI / 2 + (i / awards.length) * Math.PI * 2;
+            const orbit = r * 2.3;
+            return `<circle cx="${round(n.x + Math.cos(a) * orbit)}" cy="${round(n.y + Math.sin(a) * orbit)}" r="${round(Math.max(r * 0.2, 1.4))}" fill="${hex(HIGHLIGHT)}"/>`;
+        }).join('');
+        return `${glow}<circle cx="${round(n.x)}" cy="${round(n.y)}" r="${round(r)}" fill="${fill}"/>${ring}${satellites}`;
     });
 
 // Dust, deterministic so the image only changes when the tree does

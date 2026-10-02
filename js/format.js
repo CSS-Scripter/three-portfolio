@@ -80,11 +80,32 @@ export function renderMilestoneList(nodes) {
                 </button>
                 <div class="milestone-body">
                     ${paragraphs(n.description).map((p) => `<p>${escapeHtml(p)}</p>`).join('')}
+                    ${renderAwards(n)}
                     ${n.skills.length ? `<ul class="chips">${n.skills.map((s) => `<li>${escapeHtml(s)}</li>`).join('')}</ul>` : ''}
                     ${n.links?.length ? `<p class="milestone-links">${renderLinks(n.links)}</p>` : ''}
                 </div>
             </article>
         </li>`).join('');
+}
+
+export function sortedAwards(node) {
+    return [...(node.awards ?? [])].sort((a, b) => a.date.localeCompare(b.date));
+}
+
+export function awardMeta(award) {
+    return [award.by, formatMonth(award.date)].filter(Boolean).join(' · ');
+}
+
+export function renderAwards(node) {
+    const awards = sortedAwards(node);
+    if (!awards.length) return '';
+    return `<ul class="awards">${awards.map((a) => {
+        const title = `<span class="award-title">${escapeHtml(a.title)}</span>`;
+        const meta = `<span class="award-meta">${escapeHtml(awardMeta(a))}</span>`;
+        return a.href
+            ? `<li><a href="${escapeHtml(a.href)}" target="_blank" rel="noopener">${title}${meta}</a></li>`
+            : `<li>${title}${meta}</li>`;
+    }).join('')}</ul>`;
 }
 
 export function renderLinks(links) {

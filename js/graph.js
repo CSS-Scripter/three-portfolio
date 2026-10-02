@@ -10,6 +10,8 @@ const discGeometry = new THREE.CircleGeometry(NODE_RADIUS, 64);
 const ringGeometry = new THREE.RingGeometry(NODE_RADIUS * 1.45, NODE_RADIUS * 1.58, 64);
 const hitGeometry = new THREE.CircleGeometry(NODE_RADIUS * 1.9, 16);
 const haloGeometry = new THREE.PlaneGeometry(1, 1);
+const satelliteGeometry = new THREE.CircleGeometry(NODE_RADIUS * 0.15, 16);
+const SATELLITE_ORBIT = NODE_RADIUS * 2.3;
 
 const COLORS = {
     white: new THREE.Color(WHITE),
@@ -78,15 +80,24 @@ function createNodeView(data, item, isCurrent) {
         billboard.add(ping);
     }
 
+    // One small dot orbiting the node per award
+    const satellites = (data.awards ?? []).map(() => {
+        const dot = new THREE.Mesh(satelliteGeometry, new THREE.MeshBasicMaterial({
+            color: HIGHLIGHT, transparent: true, opacity: 0, depthWrite: false,
+        }));
+        billboard.add(dot);
+        return dot;
+    });
+
     return {
         id: data.id,
         data,
         layer: item.layer,
         angle: item.angle,
         position: group.position,
-        group, billboard, halo, disc, ring, ping, hit,
+        group, billboard, halo, disc, ring, ping, hit, satellites,
         appearAt: 0.5 + item.layer * 0.45,
-        state: { scale: 0, halo: 0, ring: 0 },
+        state: { scale: 0, halo: 0, ring: 0, satellites: 0 },
     };
 }
 
@@ -201,6 +212,17 @@ export function createGraph(layout, nodes) {
                 const cycle = view.reducedMotion ? 0.35 : (time * 0.45) % 1;
                 n.ping.scale.setScalar(1 + cycle * 1.1);
                 n.ping.material.opacity = (1 - cycle) * 0.55 * appear * (1 - n.state.ring);
+            }
+
+            if (n.satellites.length) {
+                const visibility = isHovered || isSelected ? 1 : focus && !inLineage ? 0.2 : 0.75;
+                n.state.satellites = damp(n.state.satellites, visibility * appear, 8, dt);
+                const spin = view.reducedMotion ? 0 : time * 0.35;
+                n.satellites.forEach((dot, i) => {
+                    const a = n.angle + spin + (i / n.satellites.length) * Math.PI * 2;
+                    dot.position.set(Math.cos(a) * SATELLITE_ORBIT, Math.sin(a) * SATELLITE_ORBIT, 0.01);
+                    dot.material.opacity = n.state.satellites;
+                });
             }
         });
 
