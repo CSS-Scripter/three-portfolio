@@ -120,6 +120,8 @@ function start({ scene, camera, renderer, onResize }) {
     }
 
     ['pointerdown', 'wheel'].forEach((type) => renderer.domElement.addEventListener(type, ui.dismissHelp, { once: true }));
+    // The scene isn't selectable, so clicking it wouldn't clear a selection made elsewhere (e.g. in the card)
+    renderer.domElement.addEventListener('pointerdown', () => window.getSelection()?.removeAllRanges());
 
     // Header buttons
     document.getElementById('controls_scroll_down').addEventListener('click', () => controls.scrollBy(-SCROLL_STEP));

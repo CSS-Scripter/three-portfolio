@@ -127,6 +127,12 @@ button:focus-visible, a:focus-visible, #overlay:focus-visible {
 
 .webgl #render { display: block; }
 
+/* Dragging the scene must not select the hover label or help text */
+#render {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
 #render canvas {
     display: block;
     cursor: grab;
