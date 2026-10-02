@@ -178,7 +178,6 @@ export const nodeData = [
         id: 'syncmymusic',
         title: 'SyncMyMusic',
         subtitle: 'School project',
-        // Estimated: the project semester before the GitHub repository was created (Jan 2021)
         start: '2020-09',
         end: '2021-01',
         description: `
@@ -209,7 +208,7 @@ export const nodeData = [
         id: 'pixelfont',
         title: 'PixelFont',
         subtitle: 'Side project',
-        // Estimated: when the GitHub repository was created; still online, so no end date
+        // Still online, so no end date
         start: '2020-10',
         end: null,
         description: `
