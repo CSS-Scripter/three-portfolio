@@ -4,12 +4,14 @@
 
 export const profile = {
     name: 'Thom Leenman',
+    // Where the site is hosted; link previews need absolute URLs (e.g. for og.png)
+    url: 'https://lnmn.nl',
     // Shown under the name. Leave empty to derive it from the current milestone.
     role: '',
     // Rendered as links in the header, e.g. { label: 'GitHub', href: 'https://github.com/...' }
     links: [
       { label: 'GitHub', href: 'https://github.com/CSS-Scripter' },
-      { label: 'Linkedin', href: 'https://www.linkedin.com/in/thom-leenman-662481179/' },
+      { label: 'LinkedIn', href: 'https://www.linkedin.com/in/thom-leenman-662481179/' },
     ],
 };
 

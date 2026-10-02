@@ -15,6 +15,7 @@ function staticContent() {
         '<!--profile-links-->': renderLinks(profile.links),
         '<!--milestones-->': renderMilestoneList(nodeData),
         '%DESCRIPTION%': escapeHtml(summary),
+        '%SITE_URL%': escapeHtml(profile.url.replace(/\/$/, '')),
     };
 
     return {

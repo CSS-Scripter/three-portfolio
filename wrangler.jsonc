@@ -1,0 +1,10 @@
+// Cloudflare Workers config: no Worker code, only the static site in ./dist.
+// Deployed by Workers Builds (Cloudflare's Git integration) on every push to main.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "three-portfolio",
+  "compatibility_date": "2026-10-02",
+  "assets": {
+    "directory": "./dist"
+  }
+}
