@@ -1,33 +1,31 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { BLACK, FOG_DENSITY, FOV } from './constants';
 
 export function getRenderEssentials(target) {
     const scene = new THREE.Scene();
+    scene.background = new THREE.Color(BLACK);
+    scene.fog = new THREE.FogExp2(BLACK, FOG_DENSITY);
+
     const bounds = target.getBoundingClientRect();
-    const camera = new THREE.PerspectiveCamera(100, bounds.width / bounds.height, 0.0001, 1000);
+    const camera = new THREE.PerspectiveCamera(FOV, bounds.width / bounds.height, 0.1, 400);
 
-    const renderer = new THREE.WebGLRenderer();
+    // Throws when WebGL is unavailable; main.js falls back to the static list
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(bounds.width, bounds.height);
-    window.addEventListener('resize', () => {
-        const bounds = target.getBoundingClientRect();
-        camera.aspect = bounds.width / bounds.height;
+    renderer.domElement.setAttribute('aria-hidden', 'true');
+
+    const resizeListeners = [];
+    const onResize = (fn) => resizeListeners.push(fn);
+    new ResizeObserver(() => {
+        const { width, height } = target.getBoundingClientRect();
+        if (!width || !height) return;
+        camera.aspect = width / height;
         camera.updateProjectionMatrix();
-        renderer.setSize(bounds.width, bounds.height);
-    });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setSize(width, height);
+        resizeListeners.forEach((fn) => fn(width, height));
+    }).observe(target);
 
-    return { scene, camera, renderer };
-}
-
-export function createControls(camera, renderer) {
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.minPolarAngle = Math.PI/2;
-    controls.maxPolarAngle = Math.PI/2;
-    controls.autoRotate = true;
-    controls.enableZoom = false;
-    controls.enablePan = true;
-    controls.screenSpacePanning = true;
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.2;
-
-    return controls;
+    return { scene, camera, renderer, onResize };
 }

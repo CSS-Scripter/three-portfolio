@@ -1,0 +1,176 @@
+// Single source of truth for the site's content. This file is imported both by
+// the browser (3D scene + UI) and by vite.config.js (static HTML for crawlers,
+// screen readers and browsers without WebGL), so it must not import three.js.
+
+export const profile = {
+    name: 'Thom Leenman',
+    // Shown under the name. Leave empty to derive it from the current milestone.
+    role: '',
+    // Rendered as links in the header, e.g. { label: 'GitHub', href: 'https://github.com/...' }
+    links: [
+      { label: 'GitHub', href: 'https://github.com/CSS-Scripter' },
+      { label: 'Linkedin', href: 'https://www.linkedin.com/in/thom-leenman-662481179/' },
+    ],
+};
+
+/**
+ * @typedef {Object} Milestone
+ * @property {string} id
+ * @property {string} title
+ * @property {string} subtitle
+ * @property {string} start           'YYYY-MM'
+ * @property {string | null} end      'YYYY-MM', or null when still ongoing
+ * @property {string} description     Paragraphs separated by a blank line
+ * @property {string[]} connectionsFrom
+ * @property {string[]} skills
+ */
+
+/** @type {Milestone[]} */
+export const nodeData = [
+    {
+        id: 'hsleiden',
+        title: 'Computer Science degree',
+        subtitle: 'University of Applied Sciences Leiden',
+        start: '2017-09',
+        end: '2023-06',
+        description: `
+            During this degree, I've learned about the basics of computer science, with a focus on application within the work field. The first year was focused on orientation, teaching students about the four branches they can specialize in within the degree: business data, forensics, interaction technology and software engineering. Example topics: Object oriented programming, UML design, Database design, Basic forensics & Web development.
+
+            For the second, third and fourth year, I specialized in Software Development, diving deeper into topics like Design patterns, Full stack development, Testing and Algorithms & Data structures. We did projects twice per semester, so we could put this knowledge into practice, as well as learn collaboration and project management skills. To complete the curriculum, there was also a selection of topics shared between specializations, such as Ethics, Organisational knowledge, Database management systems and Social skills.
+
+            The third and fourth year are divided into four semesters, which can be done in almost any order you'd like: a project of your choice, accompanied by lectures and tests; an internship; a minor; and a graduation internship. For me, the project was SyncMyMusic, the internship was done at OneTwoModel, the minor was Startup Ville, where I created Heya Social, and the graduation internship was at Whispp.
+        `,
+        connectionsFrom: [],
+        skills: ['Java', 'Python', 'JavaScript', 'TypeScript', 'Golang', 'Spring Boot', 'Angular', 'Vue', 'Database Design', 'Docker', 'Software Testing', 'CI/CD', 'much more...']
+    }, {
+        id: 'onetwomodel',
+        title: 'Internship Full Stack Developer',
+        subtitle: 'OneTwoModel',
+        start: '2021-09',
+        end: '2022-02',
+        description: `
+            OneTwoModel was a startup aiming at a fair and safe environment for (starting) models. Their platform allowed models to create a portfolio and get in contact with multiple agencies at a time. This structure allowed the platform to also serve as a gateway, keeping out unfair or unsafe modelling agencies.
+
+            During my internship, my goal was, together with Daniel, to create the admin and modelling agency portals. We both worked on the backend in NestJS, while splitting the frontend responsibilities per portal: I worked on the agency portal, while Daniel created the admin portal. We both worked in SvelteJS, to keep the number of technologies low and to keep a consistent architecture between portals.
+
+            The goal of the agency portal was a nice user experience and easy collaboration between multiple people within an agency, taking into account their role and permissions. Although I do not fully understand the roles within a modelling agency, I was able to set up permissions in a way that allows for full customization.
+        `,
+        connectionsFrom: ['hsleiden', 'syntax_board'],
+        skills: ['SvelteJS', 'NestJS', 'Firebase', 'TypeScript', 'UI/UX Design', 'Software Testing']
+    }, {
+        id: 'startupville',
+        title: 'Minor Startup Ville',
+        subtitle: 'The creation of Heya Social',
+        start: '2022-02',
+        end: '2022-08',
+        description: `
+            Startup Ville is an educational program of 6 months (1 semester), in which you create your own startup. The program is divided into two parts: the planning part, in which you validate whether your startup idea will work, and the creation part: building the product, marketing and finding investors.
+
+            The idea behind Heya Social was a social platform on which people with similar interests can meet up to do something that no one in their current friend group likes to do. Shortly after Startup Ville, we stopped with Heya Social, as school and internships started taking up too much time.
+        `,
+        connectionsFrom: ['hsleiden', 'onetwomodel'],
+        skills: ['Business skills', 'NestJS', 'React Native']
+    }, {
+        id: 'whispp_student',
+        title: 'Part-time Software Tester',
+        subtitle: 'Whispp B.V.',
+        start: '2022-10',
+        end: '2023-02',
+        description: `
+            I started off at Whispp mainly as a software tester, testing the iOS app that was being developed in house. Later my responsibilities expanded to creating a data collection platform to collect data for AI training (similar to Common Voice by Mozilla). Additionally, I did the research proving Whispp's marketing claims to be truthful, making Whispp eligible for the CE certificate and able to sell their product in the EU.
+        `,
+        connectionsFrom: ['startupville'],
+        skills: ['Software Testing', 'NestJS', 'Vue3', 'Research']
+    }, {
+        id: 'whispp_intern',
+        title: 'Graduation Internship Full Stack Developer',
+        subtitle: 'Whispp B.V.',
+        start: '2023-02',
+        end: '2023-08',
+        description: `
+            Whispp tries to give people with a voice disorder their voice back with AI. One of their big milestones is to get this working during a phone call, so people with voice disorders can become intelligible on the phone again.
+
+            The project assigned to me was to find a way to make these phone calls while being able to manipulate the audio server side. Additionally, I had to find an efficient way of load balancing these calls across multiple AI servers.
+
+            The problem with load balancing across multiple AI servers is that the metrics did not expose any information about the internal load of an AI server, or how much more it could handle. As the AI runs on the GPU, anything above what it can handle simply crashes the application.
+
+            To complete the design, I made UML diagrams of how the code bases of the different applications in play would look. Additionally, I set up a GitHub Actions workflow that empowers our software development cycle.
+        `,
+        connectionsFrom: ['hsleiden', 'whispp_student'],
+        skills: ['UML', 'Cloud architecture', 'GitHub Actions', 'CI/CD', 'Express', 'TypeScript']
+    }, {
+        id: 'whispp_fullstack',
+        title: 'Full-time Software Engineer',
+        subtitle: 'Whispp B.V.',
+        start: '2023-08',
+        end: '2024-01',
+        description: `
+            Developer of the backend of the calling functionality in the Whispp app.
+        `,
+        connectionsFrom: ['whispp_intern'],
+        skills: ['Express', 'TypeScript', 'Python', 'GCP'],
+    }, {
+        id: 'teaching_assistant',
+        title: 'Teaching Assistant',
+        subtitle: 'University of Applied Sciences Leiden',
+        start: '2019-09',
+        end: '2020-03',
+        description: `
+            Teaching assistant for first and second year classes. Helped with Java, UML, Math, Web development and Database modelling.
+        `,
+        connectionsFrom: ['hsleiden'],
+        skills: ['Java', 'UML', 'Math', 'Angular', 'Database Design']
+    }, {
+        id: 'syntax_board',
+        title: 'Board Member S.V. Syntax',
+        subtitle: 'Study association Syntax',
+        start: '2019-09',
+        end: '2020-08',
+        description: `
+            As president of the study association, I was, together with the other board members, in charge of the smooth running of the association. My main tasks were ensuring the other board members were able to do their tasks well, and helping where required. Additionally, I was 'the face' of the association: giving speeches, being the main speaker at public meetings and being the contact point for other associations and the university.
+        `,
+        connectionsFrom: ['hsleiden'],
+        skills: [],
+    }, {
+        id: 'syntax_educo',
+        title: 'Member of the Education Committee',
+        subtitle: 'Study association Syntax',
+        start: '2019-11',
+        end: '2022-08',
+        description: `
+            As a member of the education committee, I helped organize educational events for the study association, such as crash courses for first year topics and talks from companies.
+        `,
+        connectionsFrom: ['syntax_board'],
+        skills: [],
+    }, {
+        id: 'ois',
+        title: 'Frontend Developer',
+        subtitle: 'OIS',
+        start: '2019-07',
+        end: '2019-10',
+        description: `
+            A summer job creating websites in Angular and plain JavaScript.
+        `,
+        connectionsFrom: ['hsleiden'],
+        skills: ['Angular', 'JavaScript', 'TypeScript']
+    }, {
+        id: 'whispp_lead-architect',
+        title: 'Lead Architect',
+        subtitle: 'Whispp B.V.',
+        start: '2024-01',
+        end: null,
+        description: `
+            Main developer of infrastructure and software architecture at Whispp.
+        `,
+        connectionsFrom: ['whispp_fullstack'],
+        skills: []
+    }
+];
+
+export const GetNodeRelations = () => {
+    const mappings = {};
+    nodeData.forEach((node) => {
+        mappings[node.id] = nodeData.filter((n) => n.connectionsFrom.includes(node.id)).map((n) => n.id);
+    });
+    return mappings;
+}
