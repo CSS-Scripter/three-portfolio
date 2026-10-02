@@ -123,10 +123,14 @@ export const nodeData = [
         start: '2023-08',
         end: '2024-01',
         description: `
-            Developer of the backend of the calling functionality in the Whispp app.
+            After graduating, I continued as the backend developer of Whispp's calling functionality: a real-time audio streaming pipeline for phone calls, which processes the caller's voice through the Whispp AI in-flight to make them intelligible again. It's written in TypeScript and Python.
+
+            The AI servers pad their work into batches, which makes their GPU utilisation look the same whatever the load. That made the capacity-based routing of standard orchestrators unusable, so I built our own service discovery and load balancer, including failure detection, recovery protocols and scaling across multiple instances.
+
+            Unit test coverage of the calling stack peaked at around 80%, and integration tests validate the end-to-end audio quality and latency in production.
         `,
         connectionsFrom: ['whispp_intern'],
-        skills: ['Express', 'TypeScript', 'Python', 'GCP'],
+        skills: ['TypeScript', 'Python', 'Express', 'GCP', 'Real-time audio', 'Load balancing', 'Software Testing'],
         awards: [
             { team: true, title: 'CES Innovation Award 2024', by: 'Honoree, Accessibility & Longevity', date: '2023-11', href: 'https://www.ces.tech/ces-innovation-awards/2024/whispp/' },
         ],
@@ -227,10 +231,14 @@ export const nodeData = [
         start: '2024-01',
         end: null,
         description: `
-            Main developer of infrastructure and software architecture at Whispp.
+            As Lead Architect I'm responsible for Whispp's infrastructure and software architecture, with a focus on on-device AI. I designed the fault-tolerant calling stack behind a product with about 9,000 registered users: the AI processing servers operate independently of the orchestration and load balancing layers, so calls in progress survive infrastructure failures. I'm also the on-call engineer for this business-critical infrastructure.
+
+            On the device side, I develop Whispp's desktop application in Rust (Tauri), Vue, C++ and ONNX Runtime, with cross-language FFI modules for the performance-critical paths. By profiling execution providers and selecting the right backend, I brought inference latency down from 30 ms to 8 ms (averaged over 100 inferences on Ryzen AI 9 edge hardware). I also explored protecting the model itself, with proofs of concept for watermarking the model and for an obfuscation layer that hardens it against reverse engineering. These stayed proofs of concept and didn't make it into the product.
+
+            To keep it all running, I set up the observability stack (Grafana, Prometheus, Loki and Promtail) with custom Golang instrumentation for log tracing and alerting. On top of that runs synthetic monitoring: every 30 minutes, a real call is placed in each region, audio is pushed through the pipeline and recorded at the receiving end, and the result is automatically checked against amplification and latency thresholds.
         `,
         connectionsFrom: ['whispp_fullstack'],
-        skills: [],
+        skills: ['Software architecture', 'On-device AI', 'Rust', 'Tauri', 'C++', 'ONNX Runtime', 'Vue', 'TypeScript', 'Python', 'Golang', 'Grafana', 'Prometheus', 'Loki'],
         awards: [
             { team: true, title: 'Best of MWC 2024', by: 'Android Authority', date: '2024-02', href: 'https://www.androidauthority.com/best-of-mwc-2024-awards-3420794/' },
             { team: true, title: 'TIME Best Inventions 2024', date: '2024-10', href: 'https://time.com/collections/best-inventions-2024/7094886/whispp/' },
