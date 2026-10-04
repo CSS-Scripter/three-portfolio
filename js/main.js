@@ -3,7 +3,7 @@ import { createDust } from './ambience';
 import { SCROLL_STEP } from './constants';
 import { TreeControls } from './controls';
 import { GetNodeRelations, nodeData } from './data';
-import { chronological } from './format';
+import { chronological, currentMilestone } from './format';
 import { createGraph } from './graph';
 import { computeLayout } from './layout';
 import { getRenderEssentials } from './scene';
@@ -160,7 +160,7 @@ function start({ scene, camera, renderer, onResize }) {
     onResize(resize);
 
     // Opening shot: start above the tree, facing the current position, and glide down
-    const current = timeline.filter((n) => n.end === null).at(-1) ?? timeline.at(-1);
+    const current = currentMilestone(nodeData);
     controls.azimuth = TreeControls.azimuthFacing(graph.nodes.get(current.id).angle) - 0.6;
     controls.targetY = controls.maxY;
     controls.y = reducedMotion ? controls.maxY : controls.maxY + 14;

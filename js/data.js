@@ -29,6 +29,7 @@ export const profile = {
  * @property {string[]} skills
  * @property {{ label: string, href: string }[]} [links]  Shown on the card, e.g. a live site or repository
  * @property {Award[]} [awards]  Achievements and team awards; each one orbits the node as a small dot
+ * @property {'project'} [kind]  School and side projects; these never count as the current role
  */
 
 /**
@@ -182,6 +183,7 @@ export const nodeData = [
         id: 'syncmymusic',
         title: 'SyncMyMusic',
         subtitle: 'School project',
+        kind: 'project',
         start: '2020-09',
         end: '2021-01',
         description: `
@@ -198,6 +200,7 @@ export const nodeData = [
         id: 'cite',
         title: 'Cite',
         subtitle: 'School project',
+        kind: 'project',
         start: '2021-02',
         end: '2021-05',
         description: `
@@ -212,6 +215,7 @@ export const nodeData = [
         id: 'pixelfont',
         title: 'PixelFont',
         subtitle: 'Side project',
+        kind: 'project',
         // Still online, so no end date
         start: '2020-10',
         end: null,
@@ -223,6 +227,44 @@ export const nodeData = [
         links: [
             { label: 'pixelfont.lnmn.nl', href: 'https://pixelfont.lnmn.nl' },
             { label: 'GitHub', href: 'https://github.com/CSS-Scripter/PixelFont' },
+        ],
+    }, {
+        id: 'hexchess',
+        title: 'HexChess',
+        subtitle: 'Side project',
+        kind: 'project',
+        start: '2024-07',
+        end: '2024-08',
+        description: `
+            My first go at hexagonal chess in the browser: a Vue frontend and an Express backend in TypeScript, with Socket.IO for live games, deployed with Docker on my own server.
+
+            It implemented Gliński's rules completely, apart from a few draw rules (threefold repetition, insufficient material and the 50-move rule). You created a game and shared the link with your opponent, and after the game you could step through all the moves to see where you went wrong.
+
+            I gave up on it halfway through a refactor towards supporting more rulesets, like McCooey's.
+        `,
+        connectionsFrom: ['pixelfont'],
+        skills: ['Vue', 'Pinia', 'TypeScript', 'Express', 'Socket.IO', 'Docker'],
+        links: [
+            { label: 'GitHub', href: 'https://github.com/CSS-Scripter/hex-chess_old' },
+        ],
+    }, {
+        id: 'chexclub',
+        title: 'Chex Club',
+        subtitle: 'Side project',
+        kind: 'project',
+        start: '2026-10',
+        end: null,
+        description: `
+            Chess, but hexagonal! I picked HexChess back up and turned it into Chex Club, finally putting the chex.club domain I registered for it in 2024 to use. It completes what the original was missing, with the remaining draw rules and two more rulesets (McCooey's and Shafran's next to Gliński's), and adds what I had wanted to build next: a computer opponent at five difficulty levels, and post-game analysis that flags inaccuracies, mistakes and blunders and shows the best move.
+
+            Playing a friend still works by sending them a link, and anyone else with the link can watch.
+
+            Under the hood, a single chess engine written in Rust is compiled to WebAssembly and runs both in the browser, where it plays as the computer opponent, and on the server. The backend runs on Cloudflare Workers, with Durable Objects keeping both players in sync over WebSockets.
+        `,
+        connectionsFrom: ['hexchess'],
+        skills: ['Rust', 'WebAssembly', 'Vue', 'Cloudflare Workers', 'Durable Objects', 'WebSockets'],
+        links: [
+            { label: 'chex.club', href: 'https://chex.club' },
         ],
     }, {
         id: 'whispp_lead-architect',

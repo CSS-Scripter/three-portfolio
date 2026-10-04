@@ -50,9 +50,11 @@ export function chronological(nodes) {
     return [...nodes].sort((a, b) => a.start.localeCompare(b.start) || a.id.localeCompare(b.id));
 }
 
+/** The latest ongoing role. Projects only count when there is no ongoing role at all. */
 export function currentMilestone(nodes) {
     const ongoing = chronological(nodes.filter((n) => n.end === null));
-    return ongoing[ongoing.length - 1] ?? chronological(nodes).at(-1);
+    const roles = ongoing.filter((n) => n.kind !== 'project');
+    return roles.at(-1) ?? ongoing.at(-1) ?? chronological(nodes).at(-1);
 }
 
 export function profileRole(profile, nodes) {
