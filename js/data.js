@@ -285,6 +285,7 @@ export const nodeData = [
             { team: true, title: 'Best of MWC 2024', by: 'Android Authority', date: '2024-02', href: 'https://www.androidauthority.com/best-of-mwc-2024-awards-3420794/' },
             { team: true, title: 'TIME Best Inventions 2024', date: '2024-10', href: 'https://time.com/collections/best-inventions-2024/7094886/whispp/' },
             { team: true, title: 'Forbes Accessibility 100', date: '2025-06', href: 'https://www.forbes.com/lists/accessibility-100/' },
+            { team: true, title: 'Qualcomm Collaboration', date: '2026-09', href: 'https://www.linkedin.com/pulse/qualcomm-6g-leadership-day-ai-powered-accessibility-new-dragonwing-jefdf/' },
         ],
     }
 ];
