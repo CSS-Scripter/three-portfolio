@@ -1,0 +1,582 @@
+@import "../tokens.css";
+@import "katex/dist/katex.min.css";
+
+/* Blog pages: the post, the list of posts, and the interactive figures inside posts.
+   Same palette and vocabulary as the home page: hairlines, pills, mono micro-labels,
+   coral for whatever is in focus. */
+
+:root {
+    --measure: 41rem;    /* reading column */
+    --wide: 58rem;       /* wide figures */
+    --text: rgba(238, 238, 238, 0.84);
+    --surface: rgba(238, 238, 238, 0.03);
+    --code-bg: #0c0c0e;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font);
+    -webkit-font-smoothing: antialiased;
+    text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0 var(--gutter);
+    overflow-x: clip;
+}
+
+::selection { background: rgba(214, 104, 83, 0.35); }
+
+a { color: inherit; }
+
+a:focus-visible, button:focus-visible, canvas:focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: 3px;
+}
+
+main {
+    max-width: var(--measure);
+    margin: 0 auto;
+}
+
+/* ---------- Navigation ---------- */
+
+.crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6em;
+    max-width: var(--wide);
+    margin: 0 auto;
+    padding-top: calc(var(--gutter) * 0.75);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+}
+
+.crumbs a {
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.crumbs a:hover { color: var(--fg); border-color: var(--accent); }
+
+.eyebrow {
+    margin: 0 0 1rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.eyebrow a { color: inherit; text-decoration: none; }
+.eyebrow a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+.lede {
+    margin: 1rem 0 0;
+    font-size: 1.1rem;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.55;
+    color: var(--muted);
+}
+
+.site-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75em 1.5em;
+    max-width: var(--measure);
+    margin: 6rem auto 0;
+    padding: 1.5rem 0 calc(var(--gutter) + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--faint);
+    font-size: 0.8rem;
+}
+
+.site-footer a {
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.site-footer a:hover { color: var(--fg); border-color: var(--accent); }
+
+/* ---------- Timeline (series parts, post list) ---------- */
+
+.timeline {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.timeline > li {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2em;
+    padding: 0 0 1.5rem 1.4rem;
+    border-left: 1px solid var(--faint);
+}
+
+.timeline > li:last-child { border-left-color: transparent; }
+
+.timeline > li::before {
+    content: "";
+    position: absolute;
+    left: -4px;
+    top: 0.4em;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--fg);
+}
+
+.timeline > li.current::before {
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+}
+
+.timeline > li.planned::before {
+    background: var(--bg);
+    border: 1px solid var(--dimmed);
+}
+
+.timeline-title {
+    font-size: 0.98rem;
+    font-weight: 500;
+    color: var(--fg);
+    text-decoration: none;
+}
+
+a.timeline-title:hover { color: var(--accent); }
+.planned .timeline-title { font-weight: 400; color: var(--muted); }
+
+.timeline-meta {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+}
+
+.timeline p {
+    margin: 0.35em 0 0;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: var(--text);
+}
+
+/* ---------- Blog list ---------- */
+
+.blog-header { padding: clamp(3rem, 12vh, 7rem) 0 1rem; }
+
+.blog-header h1 {
+    margin: 0;
+    font-size: clamp(2.25rem, 6vw, 3.25rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+}
+
+.series { margin-top: 3.5rem; }
+.series .eyebrow { margin-bottom: 0.5rem; }
+
+.series h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+}
+
+.series-description {
+    margin: 0.5rem 0 1.75rem;
+    font-size: 0.92rem;
+    color: var(--muted);
+}
+
+.empty { color: var(--muted); }
+
+/* ---------- Post ---------- */
+
+.post-header { padding: clamp(3rem, 12vh, 7rem) 0 2.5rem; }
+
+.post-header h1 {
+    margin: 0;
+    font-size: clamp(2.25rem, 6vw, 3.25rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    line-height: 1.08;
+}
+
+.post-meta {
+    margin: 1.25rem 0 0;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+}
+
+.prose {
+    font-size: 1.0625rem;
+    line-height: 1.72;
+    color: var(--text);
+    counter-reset: figure;
+}
+
+.prose p, .prose ul, .prose ol { margin: 0 0 1.3em; }
+
+.prose h2 {
+    margin: 3.75rem 0 1rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+    color: var(--fg);
+    scroll-margin-top: 1.5rem;
+}
+
+.prose h3 {
+    margin: 2.5rem 0 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--fg);
+}
+
+.prose a {
+    color: var(--fg);
+    text-decoration: none;
+    border-bottom: 1px solid var(--accent);
+}
+
+.prose a:hover { color: var(--accent); }
+.prose strong { font-weight: 600; color: var(--fg); }
+.prose em { color: var(--fg); }
+.prose ul, .prose ol { padding-left: 1.3em; }
+.prose li + li { margin-top: 0.4em; }
+.prose li::marker { color: var(--accent); }
+
+.prose hr {
+    margin: 3rem 0;
+    border: none;
+    border-top: 1px solid var(--faint);
+}
+
+.prose :not(pre) > code {
+    padding: 0.1em 0.35em;
+    background: var(--surface);
+    border: 1px solid var(--faint);
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 0.86em;
+    color: var(--fg);
+}
+
+.prose pre {
+    margin: 1.75em 0;
+    padding: 1.1rem 1.25rem;
+    overflow-x: auto;
+    border: 1px solid var(--faint);
+    border-radius: 6px;
+    background: var(--code-bg) !important;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    line-height: 1.65;
+    tab-size: 4;
+    scrollbar-width: thin;
+}
+
+.prose pre code { font-family: inherit; }
+
+/* Maths */
+.math {
+    margin: 1.75em 0;
+    padding: 0.25em 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+}
+
+.katex { font-size: 1.08em; }
+.math-inline { white-space: nowrap; }
+.math .katex { font-size: 1.15em; }
+.c-re { color: var(--re); }
+.c-im { color: var(--im); }
+
+/* Side notes */
+.note {
+    margin: 2.25em 0;
+    padding: 1.1rem 1.35rem;
+    background: var(--surface);
+    border: 1px solid var(--faint);
+    border-left: 2px solid var(--accent);
+    font-size: 0.94rem;
+    line-height: 1.65;
+}
+
+.note > :last-child { margin-bottom: 0; }
+
+.note .note-title {
+    margin: 0 0 0.6em;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+/* End of a post: the rest of the series */
+.series-nav {
+    margin-top: 5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--faint);
+}
+
+/* ---------- Figures ---------- */
+
+.fig {
+    margin: 2.75em 0;
+    counter-increment: figure;
+}
+
+.fig-wide {
+    width: min(var(--wide), calc(100vw - 2 * var(--gutter)));
+    margin-left: calc(50% - min(var(--wide), calc(100vw - 2 * var(--gutter))) / 2);
+}
+
+.fig > figcaption {
+    max-width: var(--measure);
+    margin: 0.8rem auto 0;
+    font-size: 0.84rem;
+    line-height: 1.6;
+    color: var(--muted);
+}
+
+.fig > figcaption::before {
+    content: "Fig. " counter(figure);
+    margin-right: 0.6em;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.fig > figcaption + figcaption::before { content: none; }
+
+/* The figure elements themselves (blog/lib/figure.js) */
+.figure {
+    display: block;
+    padding: 1rem;
+    background: var(--surface);
+    border: 1px solid var(--faint);
+    border-radius: 8px;
+}
+
+.figure-stage {
+    position: relative;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.figure-stage canvas {
+    display: block;
+    width: 100%;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.figure-stage canvas.draggable { touch-action: none; }
+.figure-stage canvas.grab { cursor: grab; }
+.figure-stage canvas.dragging { cursor: grabbing; }
+
+.figure-fallback {
+    margin: 0;
+    padding: 3rem 1rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.figure-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--faint);
+}
+
+.figure-controls .buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0.4em 0.95em;
+    background: transparent;
+    border: 1px solid var(--faint);
+    border-radius: 999px;
+    font: inherit;
+    font-size: 0.78rem;
+    line-height: 1.3;
+    color: var(--muted);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.pill:hover { border-color: var(--accent); color: var(--fg); }
+
+.pill[aria-pressed="true"] {
+    border-color: var(--accent);
+    background: rgba(214, 104, 83, 0.1);
+    color: var(--fg);
+}
+
+.pill .icon {
+    display: inline-block;
+    min-width: 0.9em;
+    font-size: 0.75em;
+    text-align: center;
+}
+
+.control {
+    display: grid;
+    grid-template-columns: auto minmax(6rem, 1fr) auto;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1 1 15rem;
+    min-width: 0;
+}
+
+/* With more than one slider, each gets its own row and the sliders line up */
+.figure-controls:has(.control ~ .control) .control {
+    flex-basis: 100%;
+    grid-template-columns: 7rem minmax(6rem, 1fr) auto;
+}
+
+.control-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    font-size: 0.78rem;
+    color: var(--muted);
+    white-space: nowrap;
+}
+
+.swatch {
+    display: inline-block;
+    width: 12px;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--fg);
+}
+
+.swatch-re { background: var(--re); }
+.swatch-im { background: var(--im); }
+
+.control-value {
+    min-width: 4.75em;
+    text-align: right;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--fg);
+}
+
+.control input[type="range"] {
+    --thumb: var(--fg);
+    width: 100%;
+    height: 1.5rem;
+    margin: 0;
+    background: transparent;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.control input[data-tone="re"] { --thumb: var(--re); }
+.control input[data-tone="im"] { --thumb: var(--im); }
+.control input[data-tone="accent"] { --thumb: var(--accent); }
+
+.control input[type="range"]::-webkit-slider-runnable-track {
+    height: 1px;
+    background: var(--faint);
+}
+
+.control input[type="range"]::-webkit-slider-thumb {
+    width: 13px;
+    height: 13px;
+    margin-top: -6px;
+    border: none;
+    border-radius: 50%;
+    background: var(--thumb);
+    box-shadow: 0 0 0 4px var(--bg);
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.control input[type="range"]::-moz-range-track {
+    height: 1px;
+    background: var(--faint);
+}
+
+.control input[type="range"]::-moz-range-thumb {
+    width: 13px;
+    height: 13px;
+    border: none;
+    border-radius: 50%;
+    background: var(--thumb);
+    box-shadow: 0 0 0 4px var(--bg);
+}
+
+.control input[type="range"]:focus-visible { outline: none; }
+.control input[type="range"]:focus-visible::-webkit-slider-thumb { outline: 1px solid var(--accent); outline-offset: 3px; }
+.control input[type="range"]:focus-visible::-moz-range-thumb { outline: 1px solid var(--accent); outline-offset: 3px; }
+
+.readout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 1.4rem;
+    width: 100%;
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+}
+
+.readout b {
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+    color: var(--fg);
+}
+
+/* Labels on top of a 3D figure, positioned from script */
+.figure-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+    white-space: nowrap;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+@media (max-width: 560px) {
+    .figure { padding: 0.75rem; }
+    .control { grid-template-columns: 5.5rem minmax(6rem, 1fr) auto; flex-basis: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}

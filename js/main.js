@@ -1,9 +1,10 @@
 import * as THREE from 'three';
+import posts from 'virtual:blog-posts';
 import { createDust } from './ambience';
 import { SCROLL_STEP } from './constants';
 import { TreeControls } from './controls';
 import { GetNodeRelations, nodeData } from './data';
-import { chronological, currentMilestone } from './format';
+import { chronological, currentMilestone, postsFor } from './format';
 import { createGraph } from './graph';
 import { computeLayout } from './layout';
 import { getRenderEssentials } from './scene';
@@ -32,11 +33,11 @@ function start({ scene, camera, renderer, onResize }) {
     const timeline = chronological(nodeData);
 
     const layout = computeLayout(nodeData);
-    const graph = createGraph(layout, nodeData);
+    const graph = createGraph(layout, nodeData, posts);
     const dust = createDust(layout);
     scene.add(graph.group, dust.object);
 
-    const view = { hovered: null, selected: null, lineage: new Set(), reducedMotion };
+    const view = { hovered: null, hoveredPost: null, selected: null, lineage: new Set(), reducedMotion };
 
     const ui = createUI({ onSelect: select, onClose: deselect });
     ui.setListOpen(false);
@@ -51,14 +52,16 @@ function start({ scene, camera, renderer, onResize }) {
         pointer.y = -((clientY - bounds.top) / bounds.height) * 2 + 1;
         raycaster.setFromCamera(pointer, camera);
         const hit = raycaster.intersectObjects(graph.pickables, false)[0];
-        return hit ? hit.object.userData.id : null;
+        // A milestone ({ id }) or a blog post leaf ({ post })
+        return hit ? hit.object.userData : null;
     }
 
     const controls = new TreeControls(camera, renderer.domElement, {
         onTap(event) {
             ui.dismissHelp();
-            const id = pick(event.clientX, event.clientY);
-            if (id) select(id);
+            const target = pick(event.clientX, event.clientY);
+            if (target?.post) window.location.assign(target.post.url);
+            else if (target?.id) select(target.id);
             else deselect();
         },
         onHover(event) {
@@ -68,10 +71,13 @@ function start({ scene, camera, renderer, onResize }) {
 
     // Hover picking is done once per frame (the scene moves under a still cursor too)
     function updateHover() {
-        const id = lastHover ? pick(lastHover.clientX, lastHover.clientY) : null;
+        const target = lastHover ? pick(lastHover.clientX, lastHover.clientY) : null;
+        const id = target?.id ?? null;
         view.hovered = id;
-        renderer.domElement.classList.toggle('pointing', id !== null);
-        if (id && id !== view.selected) ui.showHint(byId.get(id), lastHover.clientX, lastHover.clientY);
+        view.hoveredPost = target?.post?.slug ?? null;
+        renderer.domElement.classList.toggle('pointing', target !== null);
+        if (target?.post) ui.showPostHint(target.post, lastHover.clientX, lastHover.clientY);
+        else if (id && id !== view.selected) ui.showHint(byId.get(id), lastHover.clientX, lastHover.clientY);
         else ui.hideHint();
     }
 
@@ -99,6 +105,7 @@ function start({ scene, camera, renderer, onResize }) {
             children: relations[id].map((c) => byId.get(c)),
             prev: timeline[index - 1],
             next: timeline[index + 1],
+            posts: postsFor(node, posts),
             focusCard,
         });
 
@@ -178,7 +185,7 @@ function start({ scene, camera, renderer, onResize }) {
         time += dt;
 
         updateHover();
-        controls.autoRotate = !reducedMotion && view.hovered === null && view.selected === null;
+        controls.autoRotate = !reducedMotion && view.hovered === null && view.hoveredPost === null && view.selected === null;
         controls.update(dt);
 
         // Center the scene in the space left free by the card and list panels

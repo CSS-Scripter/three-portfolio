@@ -72,7 +72,7 @@ export function escapeHtml(value) {
 }
 
 /** Static, newest-first list of all milestones. Injected into index.html at build time. */
-export function renderMilestoneList(nodes) {
+export function renderMilestoneList(nodes, posts = []) {
     return chronological(nodes).reverse().map((n) => `
         <li data-id="${escapeHtml(n.id)}">
             <article>
@@ -85,6 +85,7 @@ export function renderMilestoneList(nodes) {
                     ${renderAwards(n, 'h4')}
                     ${n.skills.length ? `<ul class="chips">${n.skills.map((s) => `<li>${escapeHtml(s)}</li>`).join('')}</ul>` : ''}
                     ${n.links?.length ? `<p class="milestone-links">${renderLinks(n.links)}</p>` : ''}
+                    ${renderPostLinks(postsFor(n, posts), 'h4')}
                 </div>
             </article>
         </li>`).join('');
@@ -120,8 +121,26 @@ function renderAwardList(awards) {
     }).join('')}</ul>`;
 }
 
+const isExternal = (href) => /^https?:\/\//.test(href);
+
 export function renderLinks(links) {
     return links
-        .map((l) => `<a href="${escapeHtml(l.href)}" target="_blank" rel="noopener">${escapeHtml(l.label)}</a>`)
+        .map((l) => `<a href="${escapeHtml(l.href)}"${isExternal(l.href) ? ' target="_blank" rel="noopener"' : ''}>${escapeHtml(l.label)}</a>`)
         .join('');
+}
+
+/** Blog posts that grew out of a milestone, oldest first. */
+export function postsFor(node, posts) {
+    return posts.filter((p) => p.milestone === node.id).sort((a, b) => a.date.localeCompare(b.date));
+}
+
+/** Links to a milestone's blog posts, under a "Writing" heading. */
+export function renderPostLinks(posts, headingTag = 'h3') {
+    if (!posts.length) return '';
+    return `<${headingTag} class="awards-label">Writing</${headingTag}><ul class="awards posts">${posts.map((p) => `
+        <li><a href="${escapeHtml(p.url)}"><span class="award-title">${escapeHtml(p.title)}</span><span class="award-meta">${escapeHtml(postMeta(p))}</span></a></li>`).join('')}</ul>`;
+}
+
+export function postMeta(post) {
+    return [post.part ? `Part ${post.part}` : 'Blog post', formatMonth(post.date.slice(0, 7))].join(' · ');
 }
