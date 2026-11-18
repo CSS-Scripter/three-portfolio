@@ -12,6 +12,14 @@ const hitGeometry = new THREE.CircleGeometry(NODE_RADIUS * 1.9, 16);
 const haloGeometry = new THREE.PlaneGeometry(1, 1);
 const satelliteGeometry = new THREE.CircleGeometry(NODE_RADIUS * 0.15, 16);
 const SATELLITE_ORBIT = NODE_RADIUS * 2.3;
+const leafGeometry = new THREE.RingGeometry(NODE_RADIUS * 0.3, NODE_RADIUS * 0.42, 32);
+const leafHitGeometry = new THREE.CircleGeometry(NODE_RADIUS * 0.9, 16);
+// Blog posts hang off their milestone: down, and out to the side, so they stay clear of
+// the node when the camera faces it
+const LEAF_REACH = 1.8;
+const LEAF_DROP = 1.2;
+const LEAF_SWING = 1.0; // radians from straight outwards, towards the side
+const LEAF_FAN = 0.45;  // radians between leaves on the same milestone
 
 const COLORS = {
     white: new THREE.Color(WHITE),
@@ -130,6 +138,47 @@ function createEdgeView(edge, nodeViews) {
     };
 }
 
+/** A blog post, as a small hollow leaf on a short stem off its milestone. */
+function createLeafView(post, nodeView, index, count) {
+    const { x, z } = nodeView.position;
+    const radial = Math.hypot(x, z) > 0.01 ? Math.atan2(z, x) : nodeView.angle;
+    const angle = radial + LEAF_SWING + (index - (count - 1) / 2) * LEAF_FAN;
+    const direction = new THREE.Vector3(Math.cos(angle), 0, Math.sin(angle));
+    const position = nodeView.position.clone()
+        .addScaledVector(direction, LEAF_REACH)
+        .add(new THREE.Vector3(0, -LEAF_DROP - index * 0.25, 0));
+
+    const group = new THREE.Group();
+    group.position.copy(position);
+    const billboard = new THREE.Group();
+    group.add(billboard);
+
+    const halo = new THREE.Mesh(haloGeometry, new THREE.MeshBasicMaterial({
+        map: getGlowTexture(), transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending,
+    }));
+    halo.scale.setScalar(NODE_RADIUS * 3.2);
+    halo.position.z = -0.05;
+    const ring = new THREE.Mesh(leafGeometry, new THREE.MeshBasicMaterial({ color: WHITE, transparent: true, opacity: 0 }));
+    const hit = new THREE.Mesh(leafHitGeometry, new THREE.MeshBasicMaterial({ visible: false }));
+    hit.userData.post = post;
+    billboard.add(halo, ring, hit);
+
+    const from = nodeView.position.clone().addScaledVector(direction, NODE_RADIUS * 1.6);
+    const to = position.clone().addScaledVector(direction, -NODE_RADIUS * 0.42);
+    const geometry = new LineGeometry();
+    geometry.setPositions([from.x, from.y, from.z, to.x, to.y, to.z]);
+    const material = new LineMaterial({ color: WHITE, linewidth: 1, transparent: true, opacity: 0, depthWrite: false, fog: true });
+    const stem = new Line2(geometry, material);
+
+    return {
+        post,
+        milestone: nodeView.id,
+        group, billboard, halo, ring, hit, stem, material,
+        appearAt: nodeView.appearAt + 0.6 + index * 0.15,
+        state: { opacity: 0, halo: 0, scale: 1 },
+    };
+}
+
 function createPulses(edges) {
     const positions = new Float32Array(edges.length * 3);
     const colors = new Float32Array(edges.length * 3);
@@ -149,30 +198,36 @@ function createPulses(edges) {
     return points;
 }
 
-export function createGraph(layout, nodes) {
+export function createGraph(layout, nodes, posts = []) {
     const group = new THREE.Group();
 
     const current = currentMilestone(nodes);
     const nodeViews = new Map(nodes.map((n) => [n.id, createNodeView(n, layout.nodes.get(n.id), n === current)]));
     const edgeViews = layout.edges.map((e) => createEdgeView(e, nodeViews));
     const pulses = createPulses(edgeViews);
+    const leafViews = [...nodeViews.values()].flatMap((nodeView) => {
+        const own = posts.filter((p) => p.milestone === nodeView.id);
+        return own.map((post, i) => createLeafView(post, nodeView, i, own.length));
+    });
 
     edgeViews.forEach((e) => group.add(e.line));
     nodeViews.forEach((n) => group.add(n.group));
+    leafViews.forEach((l) => group.add(l.stem, l.group));
     group.add(pulses);
 
-    const pickables = [...nodeViews.values()].map((n) => n.hit);
+    const pickables = [...[...nodeViews.values()].map((n) => n.hit), ...leafViews.map((l) => l.hit)];
     const tmpPoint = new THREE.Vector3();
 
     function setResolution(width, height) {
         edgeViews.forEach((e) => e.material.resolution.set(width, height));
+        leafViews.forEach((l) => l.material.resolution.set(width, height));
     }
 
     /**
      * @param {number} dt
      * @param {number} time      seconds since start, drives the intro
      * @param {THREE.Camera} camera
-     * @param {{ hovered: string|null, selected: string|null, lineage: Set<string>, reducedMotion: boolean }} view
+     * @param {{ hovered: string|null, hoveredPost: string|null, selected: string|null, lineage: Set<string>, reducedMotion: boolean }} view
      */
     function update(dt, time, camera, view) {
         const focus = view.selected !== null;
@@ -269,9 +324,29 @@ export function createGraph(layout, nodes) {
         });
         pulsePositions.needsUpdate = true;
         pulseColors.needsUpdate = true;
+
+        leafViews.forEach((l) => {
+            l.billboard.quaternion.copy(camera.quaternion);
+            const isHovered = l.post.slug === view.hoveredPost;
+            const related = view.selected === l.milestone || view.hovered === l.milestone;
+            const appear = clamp01((time - l.appearAt) / 0.6);
+            const opacity = isHovered || related ? 1 : focus ? 0.15 : 0.6;
+            l.state.opacity = damp(l.state.opacity, opacity * appear, 8, dt);
+            l.state.halo = damp(l.state.halo, (isHovered ? 0.45 : related ? 0.15 : 0) * appear, 8, dt);
+            l.state.scale = damp(l.state.scale, isHovered ? 1.35 : 1, 14, dt);
+            l.ring.material.opacity = l.state.opacity;
+            l.ring.material.color.lerp(isHovered ? COLORS.highlight : COLORS.white, 1 - Math.exp(-10 * dt));
+            l.halo.material.opacity = l.state.halo;
+            l.billboard.scale.setScalar(Math.max(l.state.scale * easeOutBack(appear), 0.0001));
+            l.material.opacity = l.state.opacity * 0.7;
+        });
     }
 
-    const introDuration = Math.max(...edgeViews.map((e) => e.endAt), ...[...nodeViews.values()].map((n) => n.appearAt + 0.7));
+    const introDuration = Math.max(
+        ...edgeViews.map((e) => e.endAt),
+        ...[...nodeViews.values()].map((n) => n.appearAt + 0.7),
+        ...leafViews.map((l) => l.appearAt + 0.6),
+    );
 
-    return { group, nodes: nodeViews, edges: edgeViews, pickables, setResolution, update, introDuration };
+    return { group, nodes: nodeViews, edges: edgeViews, leaves: leafViews, pickables, setResolution, update, introDuration };
 }

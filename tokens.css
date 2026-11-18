@@ -1,0 +1,19 @@
+/* Design tokens shared by the home page (styles.css) and the blog (blog/blog.css) */
+:root {
+    --bg: #050505;
+    --fg: #eeeeee;
+    --muted: rgba(238, 238, 238, 0.6);
+    --faint: rgba(238, 238, 238, 0.14);
+    --accent: #d66853;
+    --lineage: #e9a493;
+    --dimmed: #4a4a4a;
+    --panel: rgba(14, 14, 16, 0.84);
+    --font: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --gutter: clamp(1rem, 4vw, 4rem);
+    /* Figures: cosine / real parts are coral, sine / imaginary parts teal
+       (checked for colour-blind separation and contrast on --bg) */
+    --re: #d66853;
+    --im: #2f9fbf;
+    color-scheme: dark;
+}

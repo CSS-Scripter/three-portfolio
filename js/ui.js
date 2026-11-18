@@ -1,4 +1,4 @@
-import { formatDuration, formatPeriod, paragraphs, renderAwards } from './format';
+import { formatDuration, formatPeriod, paragraphs, postMeta, renderAwards, renderPostLinks } from './format';
 
 const $ = (id) => document.getElementById(id);
 
@@ -95,12 +95,20 @@ export function createUI({ onSelect, onClose }) {
     }
 
     function showHint(node, x, y) {
-        if (!hintVisible || el.hint.dataset.id !== node.id) {
-            el.hint.dataset.id = node.id;
-            el.hintTitle.textContent = node.title;
-            const teamAwards = node.awards?.filter((a) => a.team).length ?? 0;
-            const awards = teamAwards ? ` · ${teamAwards} award${teamAwards > 1 ? 's' : ''}` : '';
-            el.hintMeta.textContent = `${node.subtitle} · ${formatPeriod(node)}${awards}`;
+        const teamAwards = node.awards?.filter((a) => a.team).length ?? 0;
+        const awards = teamAwards ? ` · ${teamAwards} award${teamAwards > 1 ? 's' : ''}` : '';
+        placeHint(node.id, node.title, () => `${node.subtitle} · ${formatPeriod(node)}${awards}`, x, y);
+    }
+
+    function showPostHint(post, x, y) {
+        placeHint(`post:${post.slug}`, post.title, () => `Blog · ${postMeta(post)} · click to read`, x, y);
+    }
+
+    function placeHint(id, title, meta, x, y) {
+        if (!hintVisible || el.hint.dataset.id !== id) {
+            el.hint.dataset.id = id;
+            el.hintTitle.textContent = title;
+            el.hintMeta.textContent = meta();
             el.hint.classList.add('visible');
             hintVisible = true;
         }
@@ -119,9 +127,9 @@ export function createUI({ onSelect, onClose }) {
 
     /**
      * @param {import('./data').Milestone} node
-     * @param {{ parents: any[], children: any[], prev: any, next: any, focusCard?: boolean }} context
+     * @param {{ parents: any[], children: any[], prev: any, next: any, posts?: any[], focusCard?: boolean }} context
      */
-    function openCard(node, { parents, children, prev, next, focusCard }) {
+    function openCard(node, { parents, children, prev, next, posts = [], focusCard }) {
         el.title.textContent = node.title;
         el.subtitle.textContent = node.subtitle;
         el.timestamp.textContent = `${formatPeriod(node)} · ${formatDuration(node)}`;
@@ -132,8 +140,8 @@ export function createUI({ onSelect, onClose }) {
             return p;
         }));
 
-        // Built from escaped data only (see renderAwards)
-        el.awards.innerHTML = renderAwards(node);
+        // Built from escaped data only (see renderAwards and renderPostLinks)
+        el.awards.innerHTML = renderAwards(node) + renderPostLinks(posts);
 
         el.skills.replaceChildren(...node.skills.map((s) => chip(s)));
         el.skills.hidden = node.skills.length === 0;
@@ -191,7 +199,7 @@ export function createUI({ onSelect, onClose }) {
     }
 
     return {
-        showHint, hideHint, openCard, closeCard, insets, setDepth, dismissHelp, setListOpen,
+        showHint, showPostHint, hideHint, openCard, closeCard, insets, setDepth, dismissHelp, setListOpen,
         get isListOpen() { return !el.list.hidden; },
     };
 }
