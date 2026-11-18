@@ -12,7 +12,8 @@ const hitGeometry = new THREE.CircleGeometry(NODE_RADIUS * 1.9, 16);
 const haloGeometry = new THREE.PlaneGeometry(1, 1);
 const satelliteGeometry = new THREE.CircleGeometry(NODE_RADIUS * 0.15, 16);
 const SATELLITE_ORBIT = NODE_RADIUS * 2.3;
-const leafGeometry = new THREE.RingGeometry(NODE_RADIUS * 0.3, NODE_RADIUS * 0.42, 32);
+const LEAF_RADIUS = NODE_RADIUS * 0.42;
+const leafGeometry = new THREE.RingGeometry(NODE_RADIUS * 0.3, LEAF_RADIUS, 32);
 const leafHitGeometry = new THREE.CircleGeometry(NODE_RADIUS * 0.9, 16);
 // Blog posts hang off their milestone: down, and out to the side, so they stay clear of
 // the node when the camera faces it
@@ -163,20 +164,56 @@ function createLeafView(post, nodeView, index, count) {
     hit.userData.post = post;
     billboard.add(halo, ring, hit);
 
-    const from = nodeView.position.clone().addScaledVector(direction, NODE_RADIUS * 1.6);
-    const to = position.clone().addScaledVector(direction, -NODE_RADIUS * 0.42);
+    // The stem's ends are placed every frame (see placeStem), so it always runs edge to edge
     const geometry = new LineGeometry();
-    geometry.setPositions([from.x, from.y, from.z, to.x, to.y, to.z]);
+    geometry.setPositions([0, 0, 0, 0, 0, 0]);
     const material = new LineMaterial({ color: WHITE, linewidth: 1, transparent: true, opacity: 0, depthWrite: false, fog: true });
     const stem = new Line2(geometry, material);
+    stem.frustumCulled = false;
 
     return {
         post,
         milestone: nodeView.id,
+        nodeView,
         group, billboard, halo, ring, hit, stem, material,
         appearAt: nodeView.appearAt + 0.6 + index * 0.15,
         state: { opacity: 0, halo: 0, scale: 1 },
     };
+}
+
+const stemForward = new THREE.Vector3();
+const stemDirection = new THREE.Vector3();
+
+/**
+ * Runs a leaf's stem from the edge of its milestone to the edge of the leaf, as seen by
+ * the camera. Both are flat discs facing the camera, so the edge towards the other one
+ * lies along the line between their centres, flattened onto the plane they face.
+ * Returns false when the two overlap on screen and there's no stem to draw.
+ */
+function placeStem(leaf, camera) {
+    const start = leaf.nodeView.position;
+    const end = leaf.group.position;
+    stemForward.set(0, 0, -1).applyQuaternion(camera.quaternion);
+    stemDirection.subVectors(end, start);
+    stemDirection.addScaledVector(stemForward, -stemDirection.dot(stemForward));
+
+    const nodeEdge = NODE_RADIUS * leaf.nodeView.billboard.scale.x;
+    const leafEdge = LEAF_RADIUS * leaf.billboard.scale.x;
+    const length = stemDirection.length();
+    if (length < nodeEdge + leafEdge + 0.1) return false;
+    stemDirection.divideScalar(length);
+
+    const buffer = leaf.stem.geometry.attributes.instanceStart.data;
+    buffer.array.set([
+        start.x + stemDirection.x * nodeEdge,
+        start.y + stemDirection.y * nodeEdge,
+        start.z + stemDirection.z * nodeEdge,
+        end.x - stemDirection.x * leafEdge,
+        end.y - stemDirection.y * leafEdge,
+        end.z - stemDirection.z * leafEdge,
+    ]);
+    buffer.needsUpdate = true;
+    return true;
 }
 
 function createPulses(edges) {
@@ -338,7 +375,7 @@ export function createGraph(layout, nodes, posts = []) {
             l.ring.material.color.lerp(isHovered ? COLORS.highlight : COLORS.white, 1 - Math.exp(-10 * dt));
             l.halo.material.opacity = l.state.halo;
             l.billboard.scale.setScalar(Math.max(l.state.scale * easeOutBack(appear), 0.0001));
-            l.material.opacity = l.state.opacity * 0.7;
+            l.material.opacity = placeStem(l, camera) ? l.state.opacity * 0.7 : 0;
         });
     }
 
