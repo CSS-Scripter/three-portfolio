@@ -9,5 +9,8 @@
   "workers_dev": false,
   "assets": {
     "directory": "./dist"
-  }
+  },
+  // Builds of other branches run `wrangler preview`, which requires this block. It only
+  // holds preview-specific overrides (vars, bindings), and a static site has none.
+  "previews": {}
 }
