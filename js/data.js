@@ -13,7 +13,7 @@ export const profile = {
     // Rendered as links in the header, e.g. { label: 'GitHub', href: 'https://github.com/...' }
     links: [
       { label: 'GitHub', href: 'https://github.com/CSS-Scripter' },
-      { label: 'LinkedIn', href: 'https://www.linkedin.com/in/thom-leenman-662481179/' },
+      { label: 'LinkedIn', href: 'https://www.linkedin.com/in/thom-leenman/' },
     ],
 };
 
