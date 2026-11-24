@@ -1,4 +1,5 @@
 @import "./tokens.css";
+@import "./theme-picker.css";
 
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -137,7 +138,7 @@ button:focus-visible, a:focus-visible, #overlay:focus-visible {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background: radial-gradient(ellipse at center, transparent 45%, rgba(5, 5, 5, 0.75) 100%);
+    background: radial-gradient(ellipse at center, transparent 45%, color-mix(in srgb, var(--bg) 75%, transparent) 100%);
 }
 
 #hint {
@@ -303,14 +304,14 @@ button:focus-visible, a:focus-visible, #overlay:focus-visible {
 
 .chips.links button {
     padding: 0.25em 0.75em;
-    background: rgba(214, 104, 83, 0.08);
-    border: 1px solid rgba(214, 104, 83, 0.4);
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
     border-radius: 999px;
     font-size: 0.72rem;
     transition: background 0.2s;
 }
 
-.chips.links button:hover { background: rgba(214, 104, 83, 0.25); }
+.chips.links button:hover { background: color-mix(in srgb, var(--accent) 25%, transparent); }
 
 .awards {
     display: grid;

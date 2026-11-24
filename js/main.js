@@ -8,6 +8,8 @@ import { chronological, currentMilestone, postsFor } from './format';
 import { createGraph } from './graph';
 import { computeLayout } from './layout';
 import { getRenderEssentials } from './scene';
+import { onThemeChange, palette } from './theme';
+import './theme-picker';
 import { createUI } from './ui';
 
 const targetDocument = document.getElementById('render');
@@ -36,6 +38,16 @@ function start({ scene, camera, renderer, onResize }) {
     const graph = createGraph(layout, nodeData, posts);
     const dust = createDust(layout);
     scene.add(graph.group, dust.object);
+
+    function applyTheme() {
+        const colors = palette();
+        scene.background.set(colors.bg);
+        scene.fog.color.set(colors.bg);
+        graph.setPalette(colors);
+        dust.setColors(colors);
+    }
+    applyTheme();
+    onThemeChange(applyTheme);
 
     const view = { hovered: null, hoveredPost: null, selected: null, lineage: new Set(), reducedMotion };
 
@@ -137,6 +149,8 @@ function start({ scene, camera, renderer, onResize }) {
     // Keyboard: ↑/↓ travel, ←/→ step through milestones in time, Esc closes
     document.addEventListener('keydown', (e) => {
         if (e.target.closest?.('input, textarea')) return;
+        // Escape closes an open popover (the theme picker) first
+        if (e.key === 'Escape' && document.querySelector(':popover-open')) return;
         const step = (dir) => {
             const index = view.selected ? timeline.indexOf(byId.get(view.selected)) : -1;
             const next = timeline[index === -1 ? (dir > 0 ? 0 : timeline.length - 1) : index + dir];

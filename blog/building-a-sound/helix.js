@@ -76,15 +76,20 @@ export function mountHelix(stage, colors, { reducedMotion, onRotate }) {
 
     const scene = new THREE.Scene();
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 100);
-    const color = (css) => new THREE.Color(css);
-    const fg = color(colors.fg);
     const materials = [];
+    // Every material, with the palette colour it's drawn in ('fg', 're' or 'im'), so a
+    // theme change can repaint them
+    const painted = [];
+    const paint = (material, role) => {
+        material.color.set(colors[role]);
+        painted.push([material, role]);
+        return material;
+    };
 
-    function line(points, css, { width = 2, opacity = 1, dashed = false } = {}) {
+    function line(points, role, { width = 2, opacity = 1, dashed = false } = {}) {
         const geometry = new LineGeometry();
         geometry.setPositions(points.flatMap((p) => [p.x, p.y, p.z]));
-        const material = new LineMaterial({
-            color: css instanceof THREE.Color ? css : color(css),
+        const material = paint(new LineMaterial({
             linewidth: width,
             transparent: opacity < 1,
             opacity,
@@ -92,7 +97,7 @@ export function mountHelix(stage, colors, { reducedMotion, onRotate }) {
             dashSize: 0.12,
             gapSize: 0.1,
             depthWrite: opacity === 1,
-        });
+        }), role);
         materials.push(material);
         const mesh = new Line2(geometry, material);
         if (dashed) mesh.computeLineDistances();
@@ -111,45 +116,45 @@ export function mountHelix(stage, colors, { reducedMotion, onRotate }) {
     line(rect([
         new THREE.Vector3(START, -SHADOW, -1.25), new THREE.Vector3(-START, -SHADOW, -1.25),
         new THREE.Vector3(-START, -SHADOW, 1.25), new THREE.Vector3(START, -SHADOW, 1.25),
-    ]), fg, { width: 1, opacity: 0.12 });
+    ]), 'fg', { width: 1, opacity: 0.12 });
     line(rect([
         new THREE.Vector3(START, -1.25, -SHADOW), new THREE.Vector3(-START, -1.25, -SHADOW),
         new THREE.Vector3(-START, 1.25, -SHADOW), new THREE.Vector3(START, 1.25, -SHADOW),
-    ]), fg, { width: 1, opacity: 0.12 });
-    line(samples.map((p) => new THREE.Vector3(p.x, -SHADOW, p.z)), colors.re, { width: 2, opacity: 0.9 });
-    line(samples.map((p) => new THREE.Vector3(p.x, p.y, -SHADOW)), colors.im, { width: 2, opacity: 0.9 });
+    ]), 'fg', { width: 1, opacity: 0.12 });
+    line(samples.map((p) => new THREE.Vector3(p.x, -SHADOW, p.z)), 're', { width: 2, opacity: 0.9 });
+    line(samples.map((p) => new THREE.Vector3(p.x, p.y, -SHADOW)), 'im', { width: 2, opacity: 0.9 });
 
     // Axes at the start of time, and the time axis itself
-    line([new THREE.Vector3(START, 0, 0), new THREE.Vector3(-START + 0.9, 0, 0)], fg, { width: 1, opacity: 0.3 });
-    line([new THREE.Vector3(START, 0, -1.3), new THREE.Vector3(START, 0, 1.3)], colors.re, { width: 1.5 });
-    line([new THREE.Vector3(START, -1.3, 0), new THREE.Vector3(START, 1.3, 0)], colors.im, { width: 1.5 });
+    line([new THREE.Vector3(START, 0, 0), new THREE.Vector3(-START + 0.9, 0, 0)], 'fg', { width: 1, opacity: 0.3 });
+    line([new THREE.Vector3(START, 0, -1.3), new THREE.Vector3(START, 0, 1.3)], 're', { width: 1.5 });
+    line([new THREE.Vector3(START, -1.3, 0), new THREE.Vector3(START, 1.3, 0)], 'im', { width: 1.5 });
     line(Array.from({ length: 129 }, (_, i) => {
         const angle = (TAU * i) / 128;
         return new THREE.Vector3(START, Math.sin(angle), Math.cos(angle));
-    }), fg, { width: 1, opacity: 0.25 });
+    }), 'fg', { width: 1, opacity: 0.25 });
 
     // The spiral
-    line(samples, fg, { width: 2.5 });
+    line(samples, 'fg', { width: 2.5 });
 
     // A point travelling along it, dropping lines onto its two shadows
     const marker = new THREE.Group();
-    const ball = (css, radius) => new THREE.Mesh(new THREE.SphereGeometry(radius, 16, 12), new THREE.MeshBasicMaterial({ color: color(css) }));
-    const point = ball(colors.fg, 0.075);
-    const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTexture(), color: fg, transparent: true, opacity: 0.55, depthWrite: false, blending: THREE.AdditiveBlending }));
+    const ball = (role, radius) => new THREE.Mesh(new THREE.SphereGeometry(radius, 16, 12), paint(new THREE.MeshBasicMaterial(), role));
+    const point = ball('fg', 0.075);
+    const glow = new THREE.Sprite(paint(new THREE.SpriteMaterial({ map: glowTexture(), transparent: true, opacity: 0.55, depthWrite: false, blending: THREE.AdditiveBlending }), 'fg'));
     glow.scale.setScalar(0.9);
-    const floorPoint = ball(colors.re, 0.06);
-    const wallPoint = ball(colors.im, 0.06);
+    const floorPoint = ball('re', 0.06);
+    const wallPoint = ball('im', 0.06);
     marker.add(point, glow);
     scene.add(marker, floorPoint, wallPoint);
 
-    const connector = (css) => {
+    const connector = (role) => {
         const geometry = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
-        const mesh = new THREE.Line(geometry, new THREE.LineDashedMaterial({ color: color(css), dashSize: 0.1, gapSize: 0.08, transparent: true, opacity: 0.7 }));
+        const mesh = new THREE.Line(geometry, paint(new THREE.LineDashedMaterial({ dashSize: 0.1, gapSize: 0.08, transparent: true, opacity: 0.7 }), role));
         scene.add(mesh);
         return mesh;
     };
-    const toFloor = connector(colors.re);
-    const toWall = connector(colors.im);
+    const toFloor = connector('re');
+    const toWall = connector('im');
 
     function placeMarker(u) {
         const p = at(u);
@@ -287,6 +292,12 @@ export function mountHelix(stage, colors, { reducedMotion, onRotate }) {
 
     return {
         look,
+        /** Repaints in a new palette (after a theme change). */
+        setColors(next) {
+            colors = next;
+            painted.forEach(([material, role]) => material.color.set(colors[role]));
+            requestRender();
+        },
         setVisible(value) {
             visible = value;
             last = 0;
