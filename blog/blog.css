@@ -1,16 +1,16 @@
 @import "../tokens.css";
+@import "../theme-picker.css";
 @import "katex/dist/katex.min.css";
 
 /* Blog pages: the post, the list of posts, and the interactive figures inside posts.
    Same palette and vocabulary as the home page: hairlines, pills, mono micro-labels,
-   coral for whatever is in focus. */
+   the theme's accent for whatever is in focus. */
 
 :root {
     --measure: 41rem;    /* reading column */
     --wide: 58rem;       /* wide figures */
     --text: rgba(238, 238, 238, 0.84);
     --surface: rgba(238, 238, 238, 0.03);
-    --code-bg: #0c0c0e;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -29,7 +29,7 @@ body {
     overflow-x: clip;
 }
 
-::selection { background: rgba(214, 104, 83, 0.35); }
+::selection { background: color-mix(in srgb, var(--accent) 35%, transparent); }
 
 a { color: inherit; }
 
@@ -45,17 +45,26 @@ main {
 
 /* ---------- Navigation ---------- */
 
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    max-width: var(--wide);
+    margin: 0 auto;
+    padding-top: calc(var(--gutter) * 0.75);
+}
+
 .crumbs {
     display: flex;
     flex-wrap: wrap;
     gap: 0.6em;
-    max-width: var(--wide);
-    margin: 0 auto;
-    padding-top: calc(var(--gutter) * 0.75);
     font-family: var(--mono);
     font-size: 0.72rem;
     color: var(--muted);
 }
+
+.topbar .theme-toggle { padding: 0.3em 0.8em; font-size: 0.72rem; }
 
 .crumbs a {
     color: var(--muted);
@@ -434,7 +443,7 @@ a.timeline-title:hover { color: var(--accent); }
 
 .pill[aria-pressed="true"] {
     border-color: var(--accent);
-    background: rgba(214, 104, 83, 0.1);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
     color: var(--fg);
 }
 

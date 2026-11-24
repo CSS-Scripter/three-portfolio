@@ -90,6 +90,11 @@ export function createDust({ top, bottom, count = 900 }) {
 
     return {
         object: points,
+        /** @param {{ fg: string, accent: string }} palette CSS colours */
+        setColors({ fg, accent }) {
+            material.uniforms.uColor.value.set(fg);
+            material.uniforms.uTintColor.value.set(accent);
+        },
         update(time, dt) {
             material.uniforms.uTime.value = time;
             material.uniforms.uPixelRatio.value = Math.min(window.devicePixelRatio, 2);

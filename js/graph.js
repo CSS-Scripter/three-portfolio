@@ -22,6 +22,9 @@ const LEAF_DROP = 1.2;
 const LEAF_SWING = 1.0; // radians from straight outwards, towards the side
 const LEAF_FAN = 0.45;  // radians between leaves on the same milestone
 
+// The theme's colours (see setPalette). Nodes, edges and leaves ease towards these every
+// frame, so a theme change fades in; the rings and dots that only ever use the accent are
+// repainted directly.
 const COLORS = {
     white: new THREE.Color(WHITE),
     highlight: new THREE.Color(HIGHLIGHT),
@@ -255,6 +258,17 @@ export function createGraph(layout, nodes, posts = []) {
     const pickables = [...[...nodeViews.values()].map((n) => n.hit), ...leafViews.map((l) => l.hit)];
     const tmpPoint = new THREE.Vector3();
 
+    /** @param {{ fg: string, accent: string, lineage: string, dimmed: string }} palette CSS colours */
+    function setPalette({ fg, accent, lineage, dimmed }) {
+        COLORS.white.set(fg);
+        COLORS.highlight.set(accent);
+        COLORS.lineage.set(lineage);
+        COLORS.dimmed.set(dimmed);
+        nodeViews.forEach((n) => {
+            [n.ring, n.ping, ...n.satellites].forEach((mesh) => mesh?.material.color.copy(COLORS.highlight));
+        });
+    }
+
     function setResolution(width, height) {
         edgeViews.forEach((e) => e.material.resolution.set(width, height));
         leafViews.forEach((l) => l.material.resolution.set(width, height));
@@ -385,5 +399,5 @@ export function createGraph(layout, nodes, posts = []) {
         ...leafViews.map((l) => l.appearAt + 0.6),
     );
 
-    return { group, nodes: nodeViews, edges: edgeViews, leaves: leafViews, pickables, setResolution, update, introDuration };
+    return { group, nodes: nodeViews, edges: edgeViews, leaves: leafViews, pickables, setPalette, setResolution, update, introDuration };
 }

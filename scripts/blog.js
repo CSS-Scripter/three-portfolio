@@ -24,7 +24,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const blogDir = path.join(root, 'blog');
 const site = profile.url.replace(/\/$/, '');
 
-const FAVICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%23050505'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23d66853'/%3E%3C/svg%3E";
+const FAVICON = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='15' fill='%2311151c'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23d66853'/%3E%3C/svg%3E";
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const WORDS_PER_MINUTE = 200;
 
@@ -122,19 +122,20 @@ export function formatDate(value) {
 
 /* ---------- Markdown ---------- */
 
-// Syntax highlighting in the site's palette: coral keywords, light coral literals,
-// everything else in shades of the foreground. Teal is kept out on purpose: in the
-// figures it means "sine / imaginary".
+// Syntax highlighting in the site's palette: accent keywords, lineage (light accent)
+// literals, everything else in shades of the foreground. The colours are CSS variables,
+// so code follows the visitor's theme. The secondary colour is kept out on purpose: in
+// the figures it means "sine / imaginary".
 const codeTheme = {
     name: 'lnmn',
     type: 'dark',
-    colors: { 'editor.background': '#0c0c0e', 'editor.foreground': '#dcdcdc' },
+    colors: { 'editor.background': 'var(--code-bg)', 'editor.foreground': '#dcdcdc' },
     tokenColors: [
         { settings: { foreground: '#dcdcdc' } },
         { scope: ['comment', 'punctuation.definition.comment'], settings: { foreground: '#77777c', fontStyle: 'italic' } },
-        { scope: ['keyword', 'storage', 'storage.type', 'storage.modifier', 'keyword.control', 'keyword.operator.new', 'keyword.other'], settings: { foreground: '#d66853' } },
-        { scope: ['meta.preprocessor', 'keyword.control.directive', 'punctuation.definition.directive'], settings: { foreground: '#d66853' } },
-        { scope: ['string', 'string.quoted', 'constant.numeric', 'constant.language', 'constant.character'], settings: { foreground: '#e9a493' } },
+        { scope: ['keyword', 'storage', 'storage.type', 'storage.modifier', 'keyword.control', 'keyword.operator.new', 'keyword.other'], settings: { foreground: 'var(--accent)' } },
+        { scope: ['meta.preprocessor', 'keyword.control.directive', 'punctuation.definition.directive'], settings: { foreground: 'var(--accent)' } },
+        { scope: ['string', 'string.quoted', 'constant.numeric', 'constant.language', 'constant.character'], settings: { foreground: 'var(--lineage)' } },
         { scope: ['entity.name.function', 'support.function', 'meta.function-call'], settings: { foreground: '#f4f4f4' } },
         { scope: ['entity.name.type', 'support.type', 'storage.type.built-in', 'entity.name.class'], settings: { foreground: '#c4c4c8' } },
         { scope: ['keyword.operator', 'punctuation', 'meta.brace', 'entity.name.scope-resolution', 'entity.name.namespace'], settings: { foreground: '#8e8e94' } },
@@ -142,7 +143,8 @@ const codeTheme = {
 };
 
 // KaTeX macros for colour-coding maths the same way as the figures:
-// \cre{...} for cosine / real parts (coral), \cim{...} for sine / imaginary parts (teal).
+// \cre{...} for cosine / real parts (the accent), \cim{...} for sine / imaginary parts
+// (the theme's secondary colour).
 const katexOptions = {
     throwOnError: true,
     strict: false,
@@ -293,7 +295,7 @@ function head({ title, description, url, type = 'website' }) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>${escapeHtml(title)}</title>
     <meta name="description" content="${escapeHtml(description)}">
-    <meta name="theme-color" content="#050505">
+    <meta name="theme-color" content="#11151c">
     <meta property="og:type" content="${type}">
     <meta property="og:url" content="${site}${url}">
     <meta property="og:title" content="${escapeHtml(title)}">
@@ -302,14 +304,19 @@ function head({ title, description, url, type = 'website' }) {
     <meta name="twitter:card" content="summary_large_image">
     <link rel="canonical" href="${site}${url}">
     <link rel="icon" href="${FAVICON}">
-    <link rel="stylesheet" href="/blog/blog.css">`;
+    <link rel="stylesheet" href="/blog/blog.css">
+    <script type="module" src="/js/theme-picker.js"></script>`;
 }
 
+/** The bar above every blog page: breadcrumbs, and the theme picker on the right. */
 function crumbs(...trail) {
     const links = [{ label: profile.name, href: '/' }, ...trail];
-    return `<nav class="crumbs" aria-label="Breadcrumbs">${links
+    return `<div class="topbar">
+        <nav class="crumbs" aria-label="Breadcrumbs">${links
         .map((l) => `<a href="${l.href}">${escapeHtml(l.label)}</a>`)
-        .join('<span aria-hidden="true">/</span>')}</nav>`;
+        .join('<span aria-hidden="true">/</span>')}</nav>
+        <theme-picker></theme-picker>
+    </div>`;
 }
 
 function footer() {

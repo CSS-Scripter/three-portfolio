@@ -1,7 +1,9 @@
+// The default (copper) theme. In the browser the scene repaints itself in the visitor's theme
+// (tokens.css, js/theme.js); the preview image (scripts/og-image.js) always uses these.
 export const WHITE = 0xeeeeee;
-export const BLACK = 0x050505;
+export const BLACK = 0x11151c;
 export const HIGHLIGHT = 0xd66853;
-export const DIMMED = 0x4a4a4a;
+export const DIMMED = 0x4a556b;
 export const LINEAGE = 0xe9a493;
 
 // Layout (world units)

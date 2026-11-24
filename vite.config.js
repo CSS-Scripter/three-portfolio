@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import { nodeData, profile } from './js/data.js';
 import { chronological, currentMilestone, escapeHtml, profileRole, renderLinks, renderMilestoneList } from './js/format.js';
 import { blogPages, loadPosts, postSummary } from './scripts/blog.js';
+import { bootScript } from './js/theme-boot.js';
 
 // Bakes the career data into index.html, so the content exists without
 // JavaScript/WebGL (search engines, screen readers, link previews).
@@ -34,8 +35,18 @@ function staticContent() {
     };
 }
 
+// Applies a saved colour theme before the first paint, on every page (js/theme-boot.js)
+function themeBoot() {
+    return {
+        name: 'theme-boot',
+        transformIndexHtml() {
+            return [{ tag: 'script', children: bootScript, injectTo: 'head' }];
+        },
+    };
+}
+
 export default defineConfig({
-    plugins: [staticContent(), blogPages()],
+    plugins: [staticContent(), blogPages(), themeBoot()],
     build: {
         // three.js alone is ~600 kB minified (~150 kB gzipped)
         chunkSizeWarningLimit: 800,

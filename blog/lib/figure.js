@@ -4,7 +4,7 @@
 
 export const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-/** The palette, read from the CSS custom properties in tokens.css. */
+/** The palette, read from the CSS custom properties in tokens.css (and the visitor's theme). */
 export function readColors(el) {
     const style = getComputedStyle(el);
     const get = (name) => style.getPropertyValue(name).trim();
@@ -52,6 +52,12 @@ export class Figure extends HTMLElement {
 
         this.setup();
         if (!this.controls.childElementCount) this.controls.remove();
+
+        // The visitor picked another theme (js/theme.js)
+        document.addEventListener('themechange', () => {
+            this.colors = readColors(this);
+            this.invalidate();
+        });
 
         new ResizeObserver(() => this.resize()).observe(this.stage);
         new IntersectionObserver(([entry]) => {

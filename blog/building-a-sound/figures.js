@@ -1,9 +1,11 @@
 // Interactive figures for "Building a sound". Each one is a custom element, placed in
 // the post with `::: figure <element-name> [attributes]`.
 //
-// Colours follow one rule throughout the series: white is the sound itself, coral is
-// a cosine / real part, teal is a sine / imaginary part. In the first figures, before
-// cosines and sines come up, coral marks whatever the text is talking about.
+// Colours follow one rule throughout the series: white is the sound itself, the accent
+// (copper by default) is a cosine / real part, the secondary colour (slate by default) is
+// a sine / imaginary part. In the first figures, before cosines and sines come up, the
+// accent marks whatever the text is talking about. Visitors can switch themes, so the
+// post text never names the colours.
 
 import { choice, motionButton, playButton, readout, row, slider } from '../lib/controls.js';
 import { Voice } from '../lib/audio.js';
@@ -698,6 +700,7 @@ class FigHelix extends HTMLElement {
                         onRotate: () => this.views.select('free'),
                     });
                     this.scene.setVisible(true);
+                    document.addEventListener('themechange', () => this.scene.setColors(readColors(this)));
                 })
                 .catch((error) => {
                     console.warn('Could not show the 3D figure', error);

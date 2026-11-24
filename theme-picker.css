@@ -1,0 +1,172 @@
+/* The theme picker (js/theme-picker.js), on the home page and the blog */
+
+theme-picker { display: contents; }
+
+.theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    background: transparent;
+    border: 1px solid var(--faint);
+    border-radius: 999px;
+    padding: 0.4em 0.9em;
+    font: inherit;
+    font-size: 0.8rem;
+    color: var(--muted);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+}
+
+.theme-toggle:hover, .theme-toggle[aria-expanded="true"] {
+    border-color: var(--accent);
+    color: var(--fg);
+}
+
+.theme-dot, .theme-swatch {
+    display: inline-block;
+    flex: none;
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+/* ---------- Panel ---------- */
+
+.theme-panel {
+    position: fixed;
+    inset: auto;
+    width: min(17.5rem, calc(100vw - 24px));
+    margin: 0;
+    padding: 1rem;
+    background: var(--panel);
+    border: 1px solid var(--faint);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    color: var(--fg);
+    font-family: var(--font);
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+.theme-panel:popover-open { animation: theme-panel-in 0.2s ease both; }
+
+@keyframes theme-panel-in {
+    from { opacity: 0; transform: translateY(-4px); }
+}
+
+.theme-panel fieldset {
+    margin: 0;
+    padding: 0;
+    border: none;
+    min-width: 0;
+}
+
+.theme-panel legend, .theme-heading {
+    margin: 0 0 0.75rem;
+    padding: 0;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.theme-presets {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem;
+}
+
+.theme-presets legend { grid-column: 1 / -1; }
+
+.theme-option {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.55em;
+    padding: 0.45em 0.8em;
+    border: 1px solid var(--faint);
+    border-radius: 999px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.theme-option:hover { border-color: var(--accent); color: var(--fg); }
+
+.theme-option:has(:checked) {
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--fg);
+}
+
+.theme-option:has(:focus-visible) {
+    outline: 1px solid var(--accent);
+    outline-offset: 3px;
+}
+
+/* The radio itself is the whole pill */
+.theme-option input {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Custom, before any colours are picked: all of them */
+.theme-option:not([data-theme]):not(.has-colors) .theme-swatch {
+    background: conic-gradient(#d66853, #e9a03e, #20b27f, #8ca5d4, #4c8edf, #a17adf, #d66853);
+    box-shadow: none;
+}
+
+/* ---------- Custom colours ---------- */
+
+.theme-custom {
+    display: none;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--faint);
+}
+
+.is-custom .theme-custom { display: block; }
+
+.theme-custom label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--muted);
+}
+
+.theme-custom label + label { margin-top: 0.5rem; }
+
+.theme-custom input[type="color"] {
+    width: 3.25rem;
+    height: 1.6rem;
+    padding: 0;
+    background: transparent;
+    border: 1px solid var(--faint);
+    border-radius: 999px;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.theme-custom input[type="color"]::-webkit-color-swatch-wrapper { padding: 3px; }
+.theme-custom input[type="color"]::-webkit-color-swatch { border: none; border-radius: 999px; }
+.theme-custom input[type="color"]::-moz-color-swatch { border: none; border-radius: 999px; }
+.theme-custom input[type="color"]:hover { border-color: var(--accent); }
+
+.theme-custom input[type="color"]:focus-visible {
+    outline: 1px solid var(--accent);
+    outline-offset: 3px;
+}
+
+.theme-note {
+    margin: 0.85rem 0 0;
+    font-size: 0.72rem;
+    line-height: 1.5;
+    color: var(--muted);
+}

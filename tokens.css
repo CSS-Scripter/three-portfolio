@@ -1,19 +1,54 @@
-/* Design tokens shared by the home page (styles.css) and the blog (blog/blog.css) */
+/* Design tokens shared by the home page (styles.css) and the blog (blog/blog.css).
+   The base palette comes from the previous portfolio: rich black, charcoal and copper. */
 :root {
-    --bg: #050505;
     --fg: #eeeeee;
     --muted: rgba(238, 238, 238, 0.6);
     --faint: rgba(238, 238, 238, 0.14);
-    --accent: #d66853;
-    --lineage: #e9a493;
-    --dimmed: #4a4a4a;
-    --panel: rgba(14, 14, 16, 0.84);
+    /* Charcoal tints the surfaces; lifted a little for dimmed nodes, which would
+       otherwise disappear into the background */
+    --charcoal: #364156;
+    --dimmed: #4a556b;
     --font: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
     --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
     --gutter: clamp(1rem, 4vw, 4rem);
-    /* Figures: cosine / real parts are coral, sine / imaginary parts teal
-       (checked for colour-blind separation and contrast on --bg) */
-    --re: #d66853;
-    --im: #2f9fbf;
+
+    /* Derived from the theme below. The 3D scene and the figures read the theme colours,
+       --re and --im (js/theme.js, blog/lib/figure.js), so those must stay plain colours;
+       --panel and --code-bg are only used in CSS, so they can mix. */
+    --panel: color-mix(in srgb, color-mix(in srgb, var(--bg), var(--charcoal) 40%) 84%, transparent);
+    --code-bg: color-mix(in srgb, var(--bg), var(--charcoal) 25%);
+    /* Figures: cosine / real parts in the accent, sine / imaginary parts in the secondary colour */
+    --re: var(--accent);
+    --im: var(--secondary);
     color-scheme: dark;
+}
+
+/* ---------- Themes ----------
+   A theme is four colours: the accent marks whatever is in focus, lineage is a lighter
+   accent for the path that led there, secondary pairs with the accent in the blog's
+   figures (checked for colour-blind separation and contrast on --bg), and the background.
+   Presets are picked with data-theme on <html>; a custom theme sets the same four
+   properties inline (js/theme.js). Any element can carry data-theme, e.g. a swatch.
+   The presets share the rich black background and only change the accent colours. */
+
+:root, [data-theme="copper"] {
+    --accent: #d66853;
+    --lineage: #e9a493;
+    /* Charcoal's hue at the accent's brightness */
+    --secondary: #8ca5d4;
+    --bg: #11151c;
+}
+
+[data-theme="emerald"] {
+    --accent: #20b27f;
+    --lineage: #8ed5b6;
+    --secondary: #a17adf;
+    --bg: #11151c;
+}
+
+[data-theme="sapphire"] {
+    --accent: #4c8edf;
+    --lineage: #94b9ec;
+    --secondary: #e9a03e;
+    --bg: #11151c;
 }
